@@ -21,6 +21,8 @@ public class helloFX extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        //valeur vie
+        int vie1 = 20;
         // créé des carrés de 10*10 pixels de couleur rouge (enemy)
         Rectangle en1 = new Rectangle(30, 30, Color.RED);
         Rectangle en2 = new Rectangle(30, 30, Color.RED);
@@ -45,6 +47,10 @@ public class helloFX extends Application {
         p.getChildren().add(en1);
         p.getChildren().add(en2);
         p.getChildren().add(en3);
+        //ajoute la vie au panneau (texte)
+        p.getChildren().add(new javafx.scene.text.Text(10, 20, " Vie : " + vie1));
+        //ajoute la vie (rectangle) en haut à gauche de la fenêtre proportionnelle à la taille
+        p.getChildren().add(new Rectangle(10, vie1 * 10, Color.CHARTREUSE));
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
         //place r au centre de la scène en bas
@@ -150,7 +156,7 @@ public class helloFX extends Application {
     }
 
     public Rectangle bullet(){
-        Rectangle b = new Rectangle(10, 10);
+        Rectangle b = new Rectangle(5, 5);
         b.setFill(Color.BLUE);
         return b;
     }
