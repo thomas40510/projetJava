@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 //importe le module de gestion des images
 import javafx.scene.image.Image;
+import javafx.scene.paint.ImagePattern;
 
 public class helloFX extends Application {
 
@@ -24,13 +25,18 @@ public class helloFX extends Application {
         Rectangle en1 = new Rectangle(30, 30, Color.RED);
         Rectangle en2 = new Rectangle(30, 30, Color.RED);
         Rectangle en3 = new Rectangle(30, 30, Color.RED);
-        //créé un rectangle de 50x50 pixels
+        Image alien = new Image("https://static.vecteezy.com/ti/vecteur-libre/p3/3134697-dessin-illustration-du-vaisseau-spatial-gratuit-vectoriel.jpg");
+        en1.setFill(new ImagePattern( alien , 0, 0, 1, 1, true));
+        en2.setFill(new ImagePattern( alien , 0, 0, 1, 1, true));
+        en3.setFill(new ImagePattern( alien , 0, 0, 1, 1, true));
+        //créé un rectangle de la taille de images\vaisseau.png (player)
         Rectangle r = new Rectangle(50, 50);
+        //ce reclangle est l'image du vaisseau images\vaisseau.png
+        Image vaisseau = new Image("https://freepngimg.com/thumb/categories/1873.png");
+        r.setFill(new ImagePattern( vaisseau , 0, 0, 1, 1, true));
         //créé un deuxième rectangle de 50x50 pixels
         Rectangle r2 = new Rectangle(50, 50);
-        //les rempli de noir
-        r.setFill(Color.BLACK);
-        r2.setFill(Color.BLACK);
+        r2.setFill(new ImagePattern( vaisseau , 0, 0, 1, 1, true));
         //créé un panneau
         Pane p = new Pane();
         //ajoute les rectangles au panneau
