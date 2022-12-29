@@ -54,18 +54,6 @@ public class helloFX extends Application {
         en2.setY(s.getHeight() / 2 - en2.getHeight() / 2);
         en3.setX(s.getWidth() / 2 - en3.getWidth() / 2 + 60);
         en3.setY(s.getHeight() / 2 - en3.getHeight() / 2);
-        //projectiles
-        Rectangle b = new Rectangle(10, 10);
-        Rectangle b2 = new Rectangle(10, 10);
-        //les remplis de rouge
-        b.setFill(Color.BLUE);
-        b2.setFill(Color.BLUE);
-        //place b au centre du rectangle r
-        b.setX(r.getX() + r.getWidth() / 2 - b.getWidth() / 2);
-        b.setY(r.getY() - b.getHeight());
-        //place b2 au centre du rectangle r2
-        b2.setX(r2.getX() + r2.getWidth() / 2 - b2.getWidth() / 2);
-        b2.setY(r2.getY() + r2.getHeight());
         //ajoute un gestionnaire d'événements pour les touches du clavier
         s.setOnKeyPressed(e -> {
             //si la touche est la flèche de droite
@@ -103,7 +91,7 @@ public class helloFX extends Application {
                     public void run() {
                         while (curr.getY() > 0) {
                             try {
-                                TimeUnit.MILLISECONDS.sleep(10);
+                                TimeUnit.MILLISECONDS.sleep(50);
                             } catch (InterruptedException e1) {
                                 e1.printStackTrace();
                             }
@@ -119,19 +107,32 @@ public class helloFX extends Application {
             }
              // si la touche est la touche e, ajoute un projectile au niveau du vaisseau r2
             if (e.getCode() == KeyCode.E) {
-                //ajoute le rectangle b au panneau
-                p.getChildren().add(b2);
-                b2.setX(r2.getX() + r2.getWidth() / 2 - b2.getWidth() / 2);
-                b2.setY(r2.getY() - b2.getHeight());
-                //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
-                new Thread(() -> {
-                    while (b2.getY() < s.getHeight()) {
-                        try {
-                            TimeUnit.MILLISECONDS.sleep(50);
-                        } catch (InterruptedException e1) {
-                            e1.printStackTrace();
+
+                Rectangle curr2 = bullet();
+                p.getChildren().add(curr2);
+                curr2.setX(r2.getX() + r2.getWidth() / 2 - curr2.getWidth() / 2);
+                curr2.setY(r2.getY() - curr2.getHeight());
+
+                curr2.setX(r2.getX() + r2.getWidth() / 2 - curr2.getWidth() / 2);
+
+                //déplace le rectangle de 10 pixels vers le bas automatiquement toutes les 0.5s
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //while inferieur à la taille de la fenetre
+                        while (curr2.getY() < s.getHeight() ) {
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(50);
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    curr2.setY(curr2.getY() + 10);
+                                }
+                            });
                         }
-                        b2.setY(b2.getY() + 10);
                     }
                 }).start();
             }
