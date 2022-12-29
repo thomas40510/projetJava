@@ -3,6 +3,7 @@
 package com.apogee.dev.DuoVaders;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -90,17 +91,29 @@ public class helloFX extends Application {
             //si la touche est la touche espace, ajoute un projectile au niveau du vaisseau r
             if (e.getCode() == KeyCode.SPACE) {
                 //ajoute le rectangle b au panneau
-                p.getChildren().add(b);
-                b.setX(r.getX() + r.getWidth() / 2 - b.getWidth() / 2);
+                Rectangle curr = bullet();
+                p.getChildren().add(curr);
+                curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
+                curr.setY(r.getY() - curr.getHeight());
+
+                curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
                 //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
-                new Thread(() -> {
-                    while (b.getY() > -10) {
-                        try {
-                            TimeUnit.MILLISECONDS.sleep(50);
-                        } catch (InterruptedException e1) {
-                            e1.printStackTrace();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (curr.getY() > 0) {
+                            try {
+                                TimeUnit.MILLISECONDS.sleep(10);
+                            } catch (InterruptedException e1) {
+                                e1.printStackTrace();
+                            }
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    curr.setY(curr.getY() - 10);
+                                }
+                            });
                         }
-                        b.setY(b.getY() - 10);
                     }
                 }).start();
             }
@@ -127,7 +140,12 @@ public class helloFX extends Application {
         primaryStage.setScene(s);
         //affiche le stage
         primaryStage.show();
+    }
 
+    public Rectangle bullet(){
+        Rectangle b = new Rectangle(10, 10);
+        b.setFill(Color.BLUE);
+        return b;
     }
 
     public static void main(String[] args) {
