@@ -1,7 +1,4 @@
-//créé un vaisseau rouge déplacable avec les flèches du clavier
-
 //charge la classe principale com.apogee.dev.DuoVaders.MainActivity
-//qui contient la méthode main
 
 package com.apogee.dev.DuoVaders;
 
@@ -15,13 +12,17 @@ import javafx.stage.Stage;
 import java.util.concurrent.TimeUnit;
 
 
-//importe le module de géstion des images
+//importe le module de gestion des images
 import javafx.scene.image.Image;
 
 public class helloFX extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        // créé des carrés de 10*10 pixels de couleur rouge (enemy)
+        Rectangle en1 = new Rectangle(30, 30, Color.RED);
+        Rectangle en2 = new Rectangle(30, 30, Color.RED);
+        Rectangle en3 = new Rectangle(30, 30, Color.RED);
         //créé un rectangle de 50x50 pixels
         Rectangle r = new Rectangle(50, 50);
         //créé un deuxième rectangle de 50x50 pixels
@@ -34,6 +35,9 @@ public class helloFX extends Application {
         //ajoute les rectangles au panneau
         p.getChildren().add(r);
         p.getChildren().add(r2);
+        p.getChildren().add(en1);
+        p.getChildren().add(en2);
+        p.getChildren().add(en3);
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
         //place r au centre de la scène en bas
@@ -42,12 +46,19 @@ public class helloFX extends Application {
         //place r2 au centre de la scène en haut
         r2.setX(s.getWidth() / 2 - r2.getWidth() / 2);
         r2.setY(0);
+        //place les ennemis au centre de la scène
+        en1.setX(s.getWidth() / 2 - en1.getWidth() / 2 - 60);
+        en1.setY(s.getHeight() / 2 - en1.getHeight() / 2);
+        en2.setX(s.getWidth() / 2 - en2.getWidth() / 2);
+        en2.setY(s.getHeight() / 2 - en2.getHeight() / 2);
+        en3.setX(s.getWidth() / 2 - en3.getWidth() / 2 + 60);
+        en3.setY(s.getHeight() / 2 - en3.getHeight() / 2);
         //projectiles
         Rectangle b = new Rectangle(10, 10);
         Rectangle b2 = new Rectangle(10, 10);
         //les remplis de rouge
-        b.setFill(Color.RED);
-        b2.setFill(Color.RED);
+        b.setFill(Color.BLUE);
+        b2.setFill(Color.BLUE);
         //place b au centre du rectangle r
         b.setX(r.getX() + r.getWidth() / 2 - b.getWidth() / 2);
         b.setY(r.getY() - b.getHeight());
