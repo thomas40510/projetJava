@@ -87,8 +87,8 @@ public class helloFX extends Application {
                 else {
                     enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 + taille_ennemis * ((i/2)-nombre_ennemis/4));
                     enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 - 100);
+                }
             }
-        }
             else {
                 if (i<nombre_ennemis/2) {
                     enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis * (i+1));
@@ -144,14 +144,24 @@ public class helloFX extends Application {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
+                                    // handle collisions
+                                    for (int i = 0; i < enemies.size(); i++) {
+                                        Rectangle enm = enemies.get(i);
+                                        if (curr.getBoundsInParent().intersects(enm.getBoundsInParent()) && p.getChildren().contains(enm)) {
+                                            p.getChildren().remove(enm);
+                                            p.getChildren().remove(curr);
+                                            enemies.remove(i);
+                                        }
+                                    }
                                     curr.setY(curr.getY() - 10);
+
                                 }
                             });
                         }
                     }
                 }).start();
             }
-             // si la touche est la touche e, ajoute un projectile au niveau du vaisseau r2
+            // si la touche est la touche e, ajoute un projectile au niveau du vaisseau r2
             if (e.getCode() == KeyCode.E) {
 
                 Rectangle curr2 = bullet();
