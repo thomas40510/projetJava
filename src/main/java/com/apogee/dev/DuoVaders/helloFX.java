@@ -11,6 +11,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import java.util.concurrent.TimeUnit;
+import java.util.*;
+
+//import le module pour nombres aléatoires
+import java.util.Random;
+
 
 
 //importe le module de gestion des images
@@ -23,14 +28,19 @@ public class helloFX extends Application {
     public void start(Stage primaryStage) {
         //valeur vie
         int vie1 = 20;
-        // créé des carrés de 10*10 pixels de couleur rouge (enemy)
-        Rectangle en1 = new Rectangle(30, 30, Color.RED);
-        Rectangle en2 = new Rectangle(30, 30, Color.RED);
-        Rectangle en3 = new Rectangle(30, 30, Color.RED);
+        int nombre_ennemis = 5;
+        int taille_ennemis = 50;
+        // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
+        List<Rectangle> enemies = new ArrayList<Rectangle>();
+        for (int i = 0; i <= nombre_ennemis; i++) {
+            Rectangle enemy = new Rectangle(taille_ennemis, taille_ennemis, Color.RED);
+            enemies.add(enemy);
+        }
         Image alien = new Image("https://static.vecteezy.com/ti/vecteur-libre/p3/3134697-dessin-illustration-du-vaisseau-spatial-gratuit-vectoriel.jpg");
-        en1.setFill(new ImagePattern( alien , 0, 0, 1, 1, true));
-        en2.setFill(new ImagePattern( alien , 0, 0, 1, 1, true));
-        en3.setFill(new ImagePattern( alien , 0, 0, 1, 1, true));
+        //donne l'image alien aux ennemis
+        for (int i = 0; i <= nombre_ennemis; i++) {
+            enemies.get(i).setFill(new ImagePattern(alien));
+        }
         //créé un rectangle de la taille de images\vaisseau.png (player)
         Rectangle r = new Rectangle(50, 50);
         //ce reclangle est l'image du vaisseau images\vaisseau.png
@@ -44,11 +54,11 @@ public class helloFX extends Application {
         //ajoute les rectangles au panneau
         p.getChildren().add(r);
         p.getChildren().add(r2);
-        p.getChildren().add(en1);
-        p.getChildren().add(en2);
-        p.getChildren().add(en3);
+        for (int i = 0; i <= nombre_ennemis; i++) {
+            p.getChildren().add(enemies.get(i));
+        }
         //ajoute la vie au panneau (texte)
-        p.getChildren().add(new javafx.scene.text.Text(10, 20, " Vie : " + vie1));
+        p.getChildren().add(new javafx.scene.text.Text(10, 20, " Vie du vaisseau 1 : " + vie1));
         //ajoute la vie (rectangle) en haut à gauche de la fenêtre proportionnelle à la taille
         p.getChildren().add(new Rectangle(10, vie1 * 10, Color.CHARTREUSE));
         //créé une scène de 500x500 pixels
@@ -59,13 +69,37 @@ public class helloFX extends Application {
         //place r2 au centre de la scène en haut
         r2.setX(s.getWidth() / 2 - r2.getWidth() / 2);
         r2.setY(0);
-        //place les ennemis au centre de la scène
-        en1.setX(s.getWidth() / 2 - en1.getWidth() / 2 - 60);
-        en1.setY(s.getHeight() / 2 - en1.getHeight() / 2);
-        en2.setX(s.getWidth() / 2 - en2.getWidth() / 2);
-        en2.setY(s.getHeight() / 2 - en2.getHeight() / 2);
-        en3.setX(s.getWidth() / 2 - en3.getWidth() / 2 + 60);
-        en3.setY(s.getHeight() / 2 - en3.getHeight() / 2);
+        //place les ennemis au centre de la scène (todo : à gerer avec une fonction/non fonctionnel à plus de 9 ennemis/à optimiser)
+        for (int i = 0; i <= nombre_ennemis; i++) {
+            if (nombre_ennemis > 9) {
+                if (i<nombre_ennemis/4) {
+                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis * i);
+                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 + 100 );
+                }
+                if (i>=nombre_ennemis/4 && i<nombre_ennemis/2) {
+                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis * (i-nombre_ennemis/4));
+                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 + 100);
+                }
+                if (i>=nombre_ennemis/2 && i<nombre_ennemis*3/4) {
+                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis *(i/2));
+                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 - 100);
+                }
+                else {
+                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 + taille_ennemis * ((i/2)-nombre_ennemis/4));
+                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 - 100);
+            }
+        }
+            else {
+                if (i<nombre_ennemis/2) {
+                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis * (i+1));
+                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 );
+                }
+                else {
+                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 + taille_ennemis * (i-nombre_ennemis/2));
+                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2);
+                }
+            }
+        }
         //ajoute un gestionnaire d'événements pour les touches du clavier
         s.setOnKeyPressed(e -> {
             //si la touche est la flèche de droite
@@ -160,6 +194,8 @@ public class helloFX extends Application {
         b.setFill(Color.BLUE);
         return b;
     }
+
+
 
     public static void main(String[] args) {
         launch(args);
