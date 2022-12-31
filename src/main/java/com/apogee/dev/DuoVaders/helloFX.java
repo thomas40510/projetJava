@@ -145,12 +145,10 @@ public class helloFX extends Application {
                                 @Override
                                 public void run() {
                                     // handle collisions
-                                    for (int i = 0; i < enemies.size(); i++) {
-                                        Rectangle enm = enemies.get(i);
+                                    for (Rectangle enm : enemies) {
                                         if (curr.getBoundsInParent().intersects(enm.getBoundsInParent()) && p.getChildren().contains(enm)) {
                                             p.getChildren().remove(enm);
                                             p.getChildren().remove(curr);
-                                            enemies.remove(i);
                                         }
                                     }
                                     curr.setY(curr.getY() - 10);
