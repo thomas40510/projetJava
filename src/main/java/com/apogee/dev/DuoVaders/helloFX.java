@@ -105,22 +105,22 @@ public class helloFX extends Application {
             //si la touche est la flèche de droite
             if (e.getCode() == KeyCode.RIGHT) {
                 //déplace le rectangle de 10 pixels vers la droite
-                r.setX(r.getX() + 10);
+                move('r', r, s);
             }
             //si la touche est la flèche de gauche
             if (e.getCode() == KeyCode.LEFT) {
                 //déplace le rectangle de 10 pixels vers la gauche
-                r.setX(r.getX() - 10);
+                move('l', r, s);
             }
             //si la touche est la touhce q
             if (e.getCode() == KeyCode.Q) {
                 //déplace le rectangle de 10 pixels vers la gauche
-                r2.setX(r2.getX() - 10);
+                move('l', r2, s);
             }
             //si la touche est la touche d
             if (e.getCode() == KeyCode.D) {
                 //déplace le rectangle de 10 pixels vers la droite
-                r2.setX(r2.getX() + 10);
+                move('r', r2, s);
             }
             //si la touche est la touche espace, ajoute un projectile au niveau du vaisseau r
             if (e.getCode() == KeyCode.SPACE) {
@@ -137,7 +137,16 @@ public class helloFX extends Application {
         primaryStage.show();
     }
 
-    public void shoot(int direction, Pane p, Rectangle r, List < Rectangle > enemies) {
+    public void move(Character dir, Rectangle r, Scene s) {
+        int dx = (dir == 'r') ? 10 : -10;
+        double newPos = r.getX() + dx;
+
+        if (newPos >= 0 && newPos <= s.getWidth() - r.getWidth()) {
+            r.setX(newPos);
+        }
+    }
+
+    public void shoot(int direction, Pane p, Rectangle r, List <Rectangle> enemies) {
         int dx = (direction == 1) ? -10 : 10;
         System.out.println("dx = " + dx);
         Rectangle curr = bullet();
