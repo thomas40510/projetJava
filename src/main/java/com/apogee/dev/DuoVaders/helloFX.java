@@ -124,77 +124,59 @@ public class helloFX extends Application {
             }
             //si la touche est la touche espace, ajoute un projectile au niveau du vaisseau r
             if (e.getCode() == KeyCode.SPACE) {
-                //ajoute le rectangle b au panneau
-                Rectangle curr = bullet();
-                p.getChildren().add(curr);
-                curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
-                curr.setY(r.getY() - curr.getHeight());
-
-                curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
-                //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while (curr.getY() > 0) {
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(50);
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // handle collisions
-                                    for (Rectangle enm : enemies) {
-                                        if (curr.getBoundsInParent().intersects(enm.getBoundsInParent()) && p.getChildren().contains(enm)) {
-                                            p.getChildren().remove(enm);
-                                            p.getChildren().remove(curr);
-                                        }
-                                    }
-                                    curr.setY(curr.getY() - 10);
-
-                                }
-                            });
-                        }
-                    }
-                }).start();
+                shoot(1, p, r, enemies);
             }
             // si la touche est la touche e, ajoute un projectile au niveau du vaisseau r2
             if (e.getCode() == KeyCode.E) {
-
-                Rectangle curr2 = bullet();
-                p.getChildren().add(curr2);
-                curr2.setX(r2.getX() + r2.getWidth() / 2 - curr2.getWidth() / 2);
-                curr2.setY(r2.getY() - curr2.getHeight());
-
-                curr2.setX(r2.getX() + r2.getWidth() / 2 - curr2.getWidth() / 2);
-
-                //déplace le rectangle de 10 pixels vers le bas automatiquement toutes les 0.5s
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //while inferieur à la taille de la fenetre
-                        while (curr2.getY() < s.getHeight() ) {
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(50);
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    curr2.setY(curr2.getY() + 10);
-                                }
-                            });
-                        }
-                    }
-                }).start();
+                shoot(2, p, r2, enemies);
             }
         });
         //ajoute la scène au stage
         primaryStage.setScene(s);
         //affiche le stage
         primaryStage.show();
+    }
+
+    public void shoot(int direction, Pane p, Rectangle r, List < Rectangle > enemies) {
+        int dx = (direction == 1) ? -10 : 10;
+        System.out.println("dx = " + dx);
+        Rectangle curr = bullet();
+        p.getChildren().add(curr);
+        curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
+        curr.setY(r.getY() - curr.getHeight());
+
+        curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
+
+        boolean condition = (direction == 1) ? curr.getY() > 0 : curr.getY() < 500;
+
+        System.out.println("pos: " + curr.getX() + " " + curr.getY());
+        //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (condition) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(50);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            // handle collisions
+                            for (Rectangle enm : enemies) {
+                                if (curr.getBoundsInParent().intersects(enm.getBoundsInParent()) && p.getChildren().contains(enm)) {
+                                    p.getChildren().remove(enm);
+                                    p.getChildren().remove(curr);
+                                }
+                            }
+                            curr.setY(curr.getY() + dx);
+
+                        }
+                    });
+                }
+            }
+        }).start();
     }
 
     public Rectangle bullet(){
