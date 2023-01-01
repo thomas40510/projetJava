@@ -28,7 +28,7 @@ public class helloFX extends Application {
     public void start(Stage primaryStage) {
         //valeur vie
         int vie1 = 20;
-        int nombre_ennemis = 25;
+        int nombre_ennemis = 35;
         int taille_ennemis = 50;
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
         List<Rectangle> enemies = new ArrayList<Rectangle>();
