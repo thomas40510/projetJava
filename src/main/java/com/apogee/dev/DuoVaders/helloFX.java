@@ -120,7 +120,6 @@ public class helloFX extends Application {
 
     public void shoot(int direction, Pane p, Rectangle r, List <Rectangle> enemies) {
         int dx = (direction == 1) ? -10 : 10;
-        System.out.println("dx = " + dx);
         Rectangle curr = bullet();
         p.getChildren().add(curr);
         curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
@@ -130,7 +129,6 @@ public class helloFX extends Application {
 
         boolean condition = (direction == 1) ? curr.getY() > 0 : curr.getY() < 500;
 
-        System.out.println("pos: " + curr.getX() + " " + curr.getY());
         //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
         new Thread(new Runnable() {
             @Override
@@ -144,15 +142,18 @@ public class helloFX extends Application {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            // handle collisions
-                            for (Rectangle enm : enemies) {
-                                if (curr.getBoundsInParent().intersects(enm.getBoundsInParent()) && p.getChildren().contains(enm)) {
-                                    p.getChildren().remove(enm);
+                            //ONLY the first enemy crossing the bullet is killed
+                            //any other enemy crossing the bullet is not killed
+                            for (int i = 0; i < enemies.size(); i++) {
+                                if (curr.getBoundsInParent().intersects(enemies.get(i).getBoundsInParent())) {
+                                    p.getChildren().remove(enemies.get(i));
+                                    curr.setX(-1); // ensure no more hits
                                     p.getChildren().remove(curr);
+                                    enemies.remove(enemies.get(i));
+                                    break;
                                 }
                             }
                             curr.setY(curr.getY() + dx);
-
                         }
                     });
                 }
