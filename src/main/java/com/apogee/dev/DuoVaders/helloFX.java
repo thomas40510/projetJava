@@ -28,17 +28,17 @@ public class helloFX extends Application {
     public void start(Stage primaryStage) {
         //valeur vie
         int vie1 = 20;
-        int nombre_ennemis = 5;
+        int nombre_ennemis = 25;
         int taille_ennemis = 50;
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
         List<Rectangle> enemies = new ArrayList<Rectangle>();
-        for (int i = 0; i <= nombre_ennemis; i++) {
+        for (int i = 0; i < nombre_ennemis; i++) {
             Rectangle enemy = new Rectangle(taille_ennemis, taille_ennemis, Color.RED);
             enemies.add(enemy);
         }
         Image alien = new Image("https://static.vecteezy.com/ti/vecteur-libre/p3/3134697-dessin-illustration-du-vaisseau-spatial-gratuit-vectoriel.jpg");
         //donne l'image alien aux ennemis
-        for (int i = 0; i <= nombre_ennemis; i++) {
+        for (int i = 0; i < nombre_ennemis; i++) {
             enemies.get(i).setFill(new ImagePattern(alien));
         }
         //créé un rectangle de la taille de images\vaisseau.png (player)
@@ -54,7 +54,7 @@ public class helloFX extends Application {
         //ajoute les rectangles au panneau
         p.getChildren().add(r);
         p.getChildren().add(r2);
-        for (int i = 0; i <= nombre_ennemis; i++) {
+        for (int i = 0; i < nombre_ennemis; i++) {
             p.getChildren().add(enemies.get(i));
         }
         //ajoute la vie au panneau (texte)
@@ -69,37 +69,9 @@ public class helloFX extends Application {
         //place r2 au centre de la scène en haut
         r2.setX(s.getWidth() / 2 - r2.getWidth() / 2);
         r2.setY(0);
-        //place les ennemis au centre de la scène (todo : à gerer avec une fonction/non fonctionnel à plus de 9 ennemis/à optimiser)
-        for (int i = 0; i <= nombre_ennemis; i++) {
-            if (nombre_ennemis > 9) {
-                if (i<nombre_ennemis/4) {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis * i);
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 + 100 );
-                }
-                if (i>=nombre_ennemis/4 && i<nombre_ennemis/2) {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis * (i-nombre_ennemis/4));
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 + 100);
-                }
-                if (i>=nombre_ennemis/2 && i<nombre_ennemis*3/4) {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis *(i/2));
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 - 100);
-                }
-                else {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 + taille_ennemis * ((i/2)-nombre_ennemis/4));
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 - 100);
-                }
-            }
-            else {
-                if (i<nombre_ennemis/2) {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis * (i+1));
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 );
-                }
-                else {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 + taille_ennemis * (i-nombre_ennemis/2));
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2);
-                }
-            }
-        }
+        // placement des ennemis
+        place_ennemies(enemies, nombre_ennemis, taille_ennemis, s);
+
         //ajoute un gestionnaire d'événements pour les touches du clavier
         s.setOnKeyPressed(e -> {
             //si la touche est la flèche de droite
@@ -186,6 +158,23 @@ public class helloFX extends Application {
                 }
             }
         }).start();
+    }
+
+    private void place_ennemies(List<Rectangle> enemies, int nombre_enemies, int taille_enemies, Scene s){
+        /*
+        Set placement of enemies mid-X and mid-Y, by rows of 4
+        The enemies set is absolutely centered on the scene
+         */
+        int nb_cols = 9;
+        int nb_rows = nombre_enemies/nb_cols;
+        int x_offset = (int) ((s.getWidth() - nb_cols*taille_enemies)/2);
+        int y_offset = (int) ((s.getHeight() - nb_rows*taille_enemies)/2);
+        for (int i = 0; i < nombre_enemies; i++) {
+            int x = x_offset + (i%nb_cols)*taille_enemies;
+            int y = y_offset + (i/nb_cols)*taille_enemies;
+            enemies.get(i).setX(x);
+            enemies.get(i).setY(y);
+        }
     }
 
     public Rectangle bullet(){
