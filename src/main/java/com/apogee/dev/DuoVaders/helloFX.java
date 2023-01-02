@@ -159,11 +159,18 @@ public class helloFX extends Application {
             if (playersLife[0] == 0 || playersLife[1] == 0 || enemies.size() == 0){
                 return;
             }
-            int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/3);
-            int randomPlayer = rdm.nextInt(2);
-            //shoot(randomPlayer + 1, p, enemies.get(randomAlien), players);
-            for (int i = 0; i < nb_aliens_shoot; i++) {
-                shoot(3, p, enemies.get(i), players);
+            int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/4);
+            // list of nb_aliens_shoot random values
+            List<Integer> randoms = new ArrayList<Integer>();
+            for (int i = 0; i < nb_aliens_shoot; i++){
+                int random = rdm.nextInt(nombre_ennemis);
+                while (randoms.contains(random)){
+                    random = rdm.nextInt(nombre_ennemis);
+                }
+                randoms.add(random);
+            }
+            for (int i = 0; i < nb_aliens_shoot; i++){
+                shoot(3, p, enemies.get(randoms.get(i)), players);
             }
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
