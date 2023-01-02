@@ -7,7 +7,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Group;
+import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -20,15 +20,13 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.io.File;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class helloFX extends Application {
+
+    Stage primStage;
 
     public void start (Stage primaryStage) {
         //crée un panneau
@@ -44,19 +42,15 @@ public class helloFX extends Application {
         //ajoute le bouton pour lancer le jeu
         JFXButton b = new JFXButton("Jouer");
         //set style of button
-        b.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;");
+        b.setStyle("-fx-font-size: 20px;" +
+                "-jfx-button-type: RAISED;" +
+                "-fx-background-color: #cccccc");
         //Button b = new Button("Jouer");
         // centered on layout
         double bWidth = 80;
         double bHeight = 40;
         b.setMinSize(bWidth, bHeight);
         b.setMaxSize(bWidth, bHeight);
-
-        JFXButton about = new JFXButton("A propos");
-        about.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;");
-        about.setMinSize(bWidth, bHeight);
-        about.setMaxSize(bWidth, bHeight);
-
 
         b.setLayoutX(s.getWidth() / 2 - bWidth / 2);
         b.setLayoutY(s.getHeight() / 2 - bWidth / 2 + 50);
@@ -67,6 +61,24 @@ public class helloFX extends Application {
             //create blurring pane with spinner on top
             game(primaryStage);
         });
+
+        JFXButton q = new JFXButton("Quit");
+        q.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;-fx-background-color: #cccccc");
+        q.setMinSize(bWidth, bHeight);
+        q.setMaxSize(2*bWidth, 2*bHeight);
+        q.setLayoutX(s.getWidth() / 2 - bWidth / 2);
+        q.setLayoutY(s.getHeight() / 2 + bWidth / 1.3);
+        p.getChildren().add(q);
+
+        q.setOnAction(e -> {
+            // exit game
+            Log.d("Quitting game");
+            Platform.exit();
+        });
+
+        //set focus on text
+        t.requestFocus();
+
         //ajoute la scène au stage
         primaryStage.setScene(s);
         //affiche le stage
@@ -81,7 +93,7 @@ public class helloFX extends Application {
         //valeur vie
         int vie_max = 20;
         int nombre_ennemis = 15;
-        int taille_ennemis = 50;
+        int taille_ennemis = 40;
         playersLife = new double[]{vie_max, vie_max};
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
         enemies = new ArrayList<Rectangle>();
@@ -89,19 +101,36 @@ public class helloFX extends Application {
             Rectangle enemy = new Rectangle(taille_ennemis, taille_ennemis, Color.RED);
             enemies.add(enemy);
         }
-        Image alien = new Image("https://static.vecteezy.com/ti/vecteur-libre/p3/3134697-dessin-illustration-du-vaisseau-spatial-gratuit-vectoriel.jpg");
-        //donne l'image alien aux ennemis
-        for (int i = 0; i < nombre_ennemis; i++) {
-            enemies.get(i).setFill(new ImagePattern(alien));
+        try {
+            // load resources/alien.png
+            File alienImg = new File("src/main/resources/alien.png");
+            Image alien = new Image(alienImg.toURI().toString());
+
+            //donne l'image alien aux ennemis
+            for (int i = 0; i < nombre_ennemis; i++) {
+                enemies.get(i).setFill(new ImagePattern(alien));
+            }
+        } catch (Exception e){
+            Log.e("images", "Error on setting alien Image", e);
+            Platform.exit();
         }
         //créé un rectangle de la taille de images\vaisseau.png (player)
         Rectangle r = new Rectangle(50, 50);
-        //ce reclangle est l'image du vaisseau images\vaisseau.png
-        Image vaisseau = new Image("https://freepngimg.com/thumb/categories/1873.png");
-        r.setFill(new ImagePattern( vaisseau , 0, 0, 1, 1, true));
-        //créé un deuxième rectangle de 50x50 pixels
         Rectangle r2 = new Rectangle(50, 50);
-        r2.setFill(new ImagePattern( vaisseau , 0, 0, 1, 1, true));
+
+        //ce reclangle est l'image du vaisseau images\vaisseau.png
+        try {
+            File playerImg = new File("src/main/resources/player.png");
+            Image vaisseau = new Image(playerImg.toURI().toString());
+
+            r.setFill(new ImagePattern(vaisseau, 0, 0, 1, 1, true));
+            //créé un deuxième rectangle de 50x50 pixels
+            r2.setFill(new ImagePattern(vaisseau, 0, 0, 1, 1, true));
+            // r2 rotate by 180
+            r2.setStyle("-fx-rotate: 180");
+        } catch (Exception e){
+            Log.e("images", "Error on setting player Image", e);
+        }
         //créé un panneau
         Pane p = new Pane();
         //ajoute les rectangles au panneau
@@ -164,8 +193,74 @@ public class helloFX extends Application {
         primaryStage.setScene(s);
         //affiche le stage
         primaryStage.show();
+
+        primStage = primaryStage;
+
         alien_move (taille_ennemis, s);
         alienShoot(p, r, r2, s);
+
+    }
+
+    public void gameOver(Stage primaryStage, String msg) {
+        //crée un panneau
+        Pane p = new Pane();
+        //crée une scène
+        Scene s = new Scene(p, 800, 600);
+        //ajoute le texte du menu
+        Text title = new Text("Game over!");
+        title.setFont(new Font(50));
+        title.setX(s.getWidth() / 2 - title.getLayoutBounds().getWidth() / 2);
+        title.setY(s.getHeight() / 2 - title.getLayoutBounds().getHeight() / 2);
+        p.getChildren().add(title);
+        Text m = new Text(msg);
+        m.setFont(new Font(18));
+        m.setStyle("-fx-color-label-visible: #4d4d4d");
+        //place below title
+        m.setX(s.getWidth() / 2 - m.getLayoutBounds().getWidth() / 2);
+        m.setY(s.getHeight() / 2 - m.getLayoutBounds().getHeight() / 2 + 50);
+
+        //ajoute le bouton pour lancer le jeu
+        JFXButton b = new JFXButton("Rejouer");
+        //set style of button
+        b.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;-fx-background-color: #cccccc");
+        //Button b = new Button("Jouer");
+        // centered on layout
+        double bWidth = 100;
+        double bHeight = 40;
+        b.setMinSize(bWidth, bHeight);
+        b.setMaxSize(bWidth, bHeight);
+
+        b.setLayoutX(s.getWidth() / 2 - bWidth / 2);
+        b.setLayoutY(s.getHeight() / 2 - bWidth / 2 + 100);
+        p.getChildren().add(b);
+        //ajoute un gestionnaire d'événements pour le bouton
+        b.setOnAction(e -> {
+            //lance le jeu
+            game(primaryStage);
+        });
+
+        JFXButton q = new JFXButton("Quit");
+        q.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;-fx-background-color: #cccccc");
+        q.setMinSize(bWidth, bHeight);
+        q.setMaxSize(2*bWidth, 2*bHeight);
+        q.setLayoutX(s.getWidth() / 2 - bWidth / 2);
+        q.setLayoutY(s.getHeight() / 2 + bWidth / 1.3 + 30);
+        p.getChildren().add(q);
+
+        q.setOnAction(e -> {
+            // exit game
+            Log.d("Quitting game");
+            Platform.exit();
+        });
+
+        //set focus on text
+        title.requestFocus();
+
+        //ajoute la scène au stage
+        primaryStage.setScene(s);
+        //affiche le stage
+        primaryStage.show();
+
     }
 
     public void alienShoot(Pane p, Rectangle r, Rectangle r2, Scene s){
@@ -275,11 +370,16 @@ public class helloFX extends Application {
     }
 
     public void shoot(int direction, Pane p, Rectangle shooter, List <Rectangle> targets) {
-        int dx = (direction == 1) ? -10 : 10;
-        if (direction == 3) {
-            Random rdm = new Random();
-            int n = rdm.nextInt(2);
-            dx = (n == 0) ? -10 : 10;
+        int dx;
+        switch (direction) {
+            case 1 -> dx = -10;
+            case 2 -> dx = 10;
+            case 3 -> {
+                Random rdm = new Random();
+                int n = rdm.nextInt(2);
+                dx = (n == 0) ? -10 : 10;
+            }
+            default -> dx = 0;
         }
         Rectangle curr = bullet();
         flyingBullets.add(curr);
@@ -289,14 +389,15 @@ public class helloFX extends Application {
 
         curr.setX(shooter.getX() + shooter.getWidth() / 2 - curr.getWidth() / 2);
 
-        boolean conditions = (direction == 1) ? curr.getY() > 0 : curr.getY() < 500;
+        final boolean[] conditions = {(direction == 1) ? curr.getY() > 0 : curr.getY() < 500};
+        final Boolean[] running = {true};
 
         //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
         int finalDx = dx;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (conditions) {
+                while (curr.getY() > 0 && curr.getY() < 500 && curr.getX() != -1 && running[0]) {
                     try {
                         TimeUnit.MILLISECONDS.sleep(50);
                     } catch (InterruptedException e1) {
@@ -316,6 +417,7 @@ public class helloFX extends Application {
                                         p.getChildren().remove(curr);
                                         targets.remove(target);
                                         flyingBullets.remove(curr);
+                                        running[0] = false;
                                         break;
                                     }
                                 }
@@ -330,6 +432,7 @@ public class helloFX extends Application {
                                         p.getChildren().remove(curr);
                                         flyingBullets.remove(curr);
                                         Log.i("Vie du vaisseau "+(i+1)+" : "+playersLife[i]);
+                                        running[0] = false;
                                         break;
                                     }
                                 }
@@ -344,10 +447,19 @@ public class helloFX extends Application {
                                     p.getChildren().remove(b);
                                     flyingBullets.remove(b);
                                     flyingBullets.remove(curr);
+                                    running[0] = false;
                                     return;
                                 }
                             }
                             curr.setY(curr.getY() + finalDx);
+
+                            if (enemies.isEmpty()){
+                                Log.d("No enemies left");
+                                curr.setX(-1);
+                                running[0] = false;
+                                gameOver(primStage, "No enemies left. You win!");
+                            }
+
                         }
                     });
                 }
