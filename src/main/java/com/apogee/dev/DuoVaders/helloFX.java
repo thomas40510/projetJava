@@ -1,4 +1,9 @@
-//charge la classe principale com.apogee.dev.DuoVaders.MainActivity
+/**
+ * helloFX.java
+ * Fichier principal de l'application
+ * @authors Margot Taillantou-Candau, Thomas Prévost
+ * @version 1.8
+ */
 
 package com.apogee.dev.DuoVaders;
 
@@ -27,6 +32,13 @@ public class helloFX extends Application {
 
     Stage primStage;
 
+    /**
+     * Méthode principale de l'application
+     * @param primaryStage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     */
     public void start (Stage primaryStage) {
         //crée un panneau
         Pane p = new Pane();
@@ -44,8 +56,8 @@ public class helloFX extends Application {
         b.setStyle("-fx-font-size: 20px;" +
                 "-jfx-button-type: RAISED;" +
                 "-fx-background-color: #cccccc");
-        //Button b = new Button("Jouer");
-        // centered on layout
+
+        // Positionnement du bouton
         double bWidth = 80;
         double bHeight = 40;
         b.setMinSize(bWidth, bHeight);
@@ -57,10 +69,10 @@ public class helloFX extends Application {
         //ajoute un gestionnaire d'événements pour le bouton
         b.setOnAction(e -> {
             //lance le jeu
-            //create blurring pane with spinner on top
             game(primaryStage);
         });
 
+        // Ajout d'un bouton pour quitter le jeu
         JFXButton q = new JFXButton("Quit");
         q.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;-fx-background-color: #cccccc");
         q.setMinSize(bWidth, bHeight);
@@ -75,7 +87,7 @@ public class helloFX extends Application {
             Platform.exit();
         });
 
-        //set focus on text
+        //set focus on text (better render of buttons)
         t.requestFocus();
 
         //ajoute la scène au stage
@@ -84,16 +96,27 @@ public class helloFX extends Application {
         primaryStage.show();
     }
 
+    /**********************
+     * Variables globales *
+     **********************/
     double[] playersLife = new double[2];
     List<Rectangle> enemies;
     List<Rectangle> flyingBullets = new ArrayList<>();
 
+    /**
+     * Main game method - instantiate all the game objects, start game loops and handle mechanics
+     * @param primaryStage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     */
     public void game(Stage primaryStage) {
         //valeur vie
         int vie_max = 20;
-        int nombre_ennemis = 15;
+        int nombre_ennemis = 25;
         int taille_ennemis = 40;
-        playersLife = new double[]{vie_max, vie_max};
+        playersLife = new double[]{vie_max, vie_max}; //vie des joueurs (0 = joueur 1, 1 = joueur 2
+
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
         enemies = new ArrayList<Rectangle>();
         for (int i = 0; i < nombre_ennemis; i++) {
@@ -101,7 +124,7 @@ public class helloFX extends Application {
             enemies.add(enemy);
         }
         try {
-            // load resources/alien.png
+            // Charge l'image de l'alien et la met en fond des ennemis
             File alienImg = new File("src/main/resources/alien.png");
             Image alien = new Image(alienImg.toURI().toString());
 
@@ -113,20 +136,20 @@ public class helloFX extends Application {
             Log.e("images", "Error on setting alien Image", e);
             Platform.exit();
         }
-        //créé un rectangle de la taille de images\vaisseau.png (player)
+
+        // Create players
         Rectangle r = new Rectangle(50, 50);
         Rectangle r2 = new Rectangle(50, 50);
 
-        //ce reclangle est l'image du vaisseau images\vaisseau.png
-        try {
+        try { // Load player image
             File playerImg = new File("src/main/resources/player.png");
             Image vaisseau = new Image(playerImg.toURI().toString());
 
             r.setFill(new ImagePattern(vaisseau, 0, 0, 1, 1, true));
-            //créé un deuxième rectangle de 50x50 pixels
+
             r2.setFill(new ImagePattern(vaisseau, 0, 0, 1, 1, true));
-            // r2 rotate by 180
-            r2.setStyle("-fx-rotate: 180");
+
+            r2.setStyle("-fx-rotate: 180"); // r2 is facing upside down
         } catch (Exception e){
             Log.e("images", "Error on setting player Image", e);
         }
@@ -135,13 +158,13 @@ public class helloFX extends Application {
         //ajoute les rectangles au panneau
         p.getChildren().add(r);
         p.getChildren().add(r2);
-        for (int i = 0; i < nombre_ennemis; i++) {
-            p.getChildren().add(enemies.get(i));
-        }
+        p.getChildren().addAll(enemies);
+
         //ajoute la vie au panneau (texte)
         p.getChildren().add(new javafx.scene.text.Text(10, 20, " Vie du vaisseau 1 : " + playersLife[0]));
         //ajoute la vie (rectangle) en haut à gauche de la fenêtre proportionnelle à la taille
         p.getChildren().add(new Rectangle(10, playersLife[0] * 10, Color.CHARTREUSE));
+
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
         //place r au centre de la scène en bas
@@ -151,37 +174,35 @@ public class helloFX extends Application {
         r2.setX(s.getWidth() / 2 - r2.getWidth() / 2);
         r2.setY(0);
         // placement des ennemis
-        place_enemies(enemies, nombre_ennemis, taille_ennemis, s);
-
-
+        place_enemies(nombre_ennemis, taille_ennemis, s);
 
         //ajoute un gestionnaire d'événements pour les touches du clavier
         s.setOnKeyPressed(e -> {
             //si la touche est la flèche de droite
             if (e.getCode() == KeyCode.RIGHT) {
-                //déplace le rectangle de 10 pixels vers la droite
+                //déplace le joueur vers la droite
                 move('r', r, s);
             }
             //si la touche est la flèche de gauche
             if (e.getCode() == KeyCode.LEFT) {
-                //déplace le rectangle de 10 pixels vers la gauche
+                //déplace le joueur vers la gauche
                 move('l', r, s);
             }
             //si la touche est la touhce q
             if (e.getCode() == KeyCode.Q) {
-                //déplace le rectangle de 10 pixels vers la gauche
+                //déplacement vers la gauche du joueur 2
                 move('l', r2, s);
             }
             //si la touche est la touche d
             if (e.getCode() == KeyCode.D) {
-                //déplace le rectangle de 10 pixels vers la droite
+                //déplacement vers la droite du joueur 2
                 move('r', r2, s);
             }
-            //si la touche est la touche espace, ajoute un projectile au niveau du vaisseau r
+            // Envoi d'un projectile par joueur 1
             if (e.getCode() == KeyCode.SPACE) {
                 shoot(1, p, r, enemies);
             }
-            // si la touche est la touche e, ajoute un projectile au niveau du vaisseau r2
+            // Envoi d'un projectile par joueur 2
             if (e.getCode() == KeyCode.E) {
                 shoot(2, p, r2, enemies);
             }
@@ -193,38 +214,42 @@ public class helloFX extends Application {
         //affiche le stage
         primaryStage.show();
 
-        primStage = primaryStage;
+        primStage = primaryStage; // save the primary stage for later use
 
-        alien_move (taille_ennemis, s);
-        alienShoot(p, r, r2, s);
+        alienMove(taille_ennemis, s); // déplacement des aliens
+        alienShoot(p, r, r2, s);  // tirs des aliens
 
     }
 
+    /**
+     * Écran de fin de partie
+     * @param primaryStage the primary stage for this application, onto which the application scene can be set.
+     *                     Applications may create other stages, if needed, but they will not be primary stages.
+     * @param msg Message à afficher aux joueurs (raison du game over)
+     */
     public void gameOver(Stage primaryStage, String msg) {
         //crée un panneau
         Pane p = new Pane();
         //crée une scène
         Scene s = new Scene(p, 800, 600);
-        //ajoute le texte du menu
+        //ajoute le texte de titre
         Text title = new Text("Game Over!");
         title.setFont(new Font(50));
         title.setX(s.getWidth() / 2 - title.getLayoutBounds().getWidth() / 2);
         title.setY(s.getHeight() / 2 - title.getLayoutBounds().getHeight() / 2);
         p.getChildren().add(title);
+
+        // message
         Text m = new Text(msg);
         m.setFont(new Font(18));
         m.setStyle("-fx-color-label-visible: #acacac");
-        //place below title
         m.setX(s.getWidth() / 2 - m.getLayoutBounds().getWidth() / 2);
         m.setY(s.getHeight() / 2 - m.getLayoutBounds().getHeight() / 2 + 10);
         p.getChildren().add(m);
 
-        //ajoute le bouton pour lancer le jeu
+        //ajoute le bouton pour relancer le jeu
         JFXButton b = new JFXButton("Rejouer");
-        //set style of button
         b.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;-fx-background-color: #cccccc");
-        //Button b = new Button("Jouer");
-        // centered on layout
         double bWidth = 100;
         double bHeight = 40;
         b.setMinSize(bWidth, bHeight);
@@ -239,6 +264,7 @@ public class helloFX extends Application {
             game(primaryStage);
         });
 
+        // Bouton pour quitter
         JFXButton q = new JFXButton("Quit");
         q.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;-fx-background-color: #cccccc");
         q.setMinSize(bWidth, bHeight);
@@ -260,47 +286,18 @@ public class helloFX extends Application {
         primaryStage.setScene(s);
         //affiche le stage
         primaryStage.show();
-
     }
 
-    public void alienShoot(Pane p, Rectangle r, Rectangle r2, Scene s){
-        Random rdm = new Random();
-        List<Rectangle> players = new ArrayList<Rectangle>();
-        players.add(r);
-        players.add(r2);
-        // every random time, random aliens shoot
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1.4), e -> {
-            if (playersLife[0] == 0 || playersLife[1] == 0 || enemies.size() == 0){
-                return;
-            }
-            int nombre_ennemis = enemies.size();
-            int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/2);
-            // list of nb_aliens_shoot random values
-            List<Integer> randoms = new ArrayList<Integer>();
-            for (int i = 0; i < nb_aliens_shoot; i++){
-                int random = rdm.nextInt(nombre_ennemis);
-                while (randoms.contains(random)){
-                    random = rdm.nextInt(nombre_ennemis);
-                }
-                randoms.add(random);
-            }
-            for (int i = 0; i < nb_aliens_shoot; i++){
-                shoot(3, p, enemies.get(randoms.get(i)), players);
-            }
-        }));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
-    }
-
-    //deplacement aliens
-    /*
-     déplacement des ennemis (L'armada alien verticale part de la gauche de l'écran et se déplace horizontalement de gauche à droite.
-     Lorsqu'elle atteint le côté droit de l'écran, elle descend d'une rangée et se déplace de droite à gauche.
-     Lorsqu'elle atteint le côté gauche de l'écran, elle descend d'une rangée et se déplace à nouveau vers la droite.
-    */
-
-
-    public void alien_move (int taille_ennemis, Scene s){
+    /**
+     * Déplacement des aliens.
+     * L'armada alien verticale part de la gauche de l'écran et se déplace horizontalement de gauche à droite.
+     * Lorsqu'elle atteint le côté droit de l'écran, elle monte ou descend d'une rangée et se déplace de droite à gauche.
+     * Lorsqu'elle atteint le côté gauche de l'écran, elle monte ou descend d'une rangée et se déplace à nouveau vers la droite.
+     * Le déplacement vertical est aléatoire pour chaque alien.
+     * @param taille_ennemis Taille des aliens
+     * @param s Scène sur laquelle les aliens sont affichés
+     */
+    public void alienMove(int taille_ennemis, Scene s){
         int nb_enemies = enemies.size();
         //déplacement des ennemis
         //tableau des directions des aliens initié à 1 (droite)
@@ -313,53 +310,35 @@ public class helloFX extends Application {
 
         Timeline timeline = new Timeline();
         KeyFrame kf = new KeyFrame(Duration.seconds(0.1), e -> {
+            Random rdm = new Random();
             int nombre_ennemis = enemies.size();
             for (int i = 0; i < nombre_ennemis; i++) {
-                //si l'ennemi est en bas de la fenêtre
-                if (enemies.get(i).getY() >= s.getHeight() - taille_ennemis) {
-                    //le jeu est perdu
-                    //System.out.println("Game Over");
-                }
-                //si l'ennemi est en haut de la fenêtre
-                if (enemies.get(i).getY() <= 0) {
-                    //le jeu est perdu
-                    //System.out.println("Game Over");
-                }
                 //si l'ennemi est à gauche de la fenêtre
                 if (enemies.get(i).getX() <= 0) {
+                    //on descend / monte et on change la direction
+                    int random = rdm.nextInt(2);
+                    int dY = (random == 0) ? -40 : 40;
+
                     bottomCount.getAndIncrement();
                     enemies.get(i).setX(enemies.get(i).getX() + 40);
-                    enemies.get(i).setY(enemies.get(i).getY() - 40);
-                    //pause pendant 10 msecondes
-                    /*try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                       */
-                    //change la direction de l'ennemi
+                    enemies.get(i).setY(enemies.get(i).getY() + dY);
                     directions[i] = 1;
                 }
                 //si l'ennemi est à droite de la fenêtre
                 if (enemies.get(i).getX() >= s.getWidth() - taille_ennemis) {
-                    //déplace l'ennemi vers la gauche descend d'une rangée et part vers la droite
+                    //déplace l'ennemi vers la gauche descend/monte d'une rangée et part vers la droite
+                    // one chance on two to go down
+                    int random = rdm.nextInt(2);
+                    int dY = (random == 0) ? -40 : 40;
                     enemies.get(i).setX(enemies.get(i).getX() - 40);
-                    enemies.get(i).setY(enemies.get(i).getY() - 40);
+                    enemies.get(i).setY(enemies.get(i).getY() + dY);
                     bottomCount.getAndIncrement();
-                    //pause pendant 10 msecondes
-                    /*try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException ex) {
-                        Thread.currentThread().interrupt();
-                    }
-                       */
-                    //change la direction de l'ennemi
                     directions[i] = -1;
                 }
                 //déplace l'ennemi
                 enemies.get(i).setX(enemies.get(i).getX() + 10 * directions[i]);
-                Log.i("bottomCount = " + bottomCount);
                 if (bottomCount.get() == 2*nb_enemies){
+                    // on arrive à deux déplacements verticaux
                     timeline.stop();
                     Log.i("Stopping motion");
                 }
@@ -370,6 +349,13 @@ public class helloFX extends Application {
         timeline.play();
     }
 
+    /**
+     * Déplacement des joueurs.
+     * La seule condition est que les joueurs ne puissent pas sortir de l'écran.
+     * @param dir Direction du déplacement ('r' pour droite, 'l' pour gauche)
+     * @param r Rectangle représentant le joueur
+     * @param s Scène sur laquelle le joueur est affiché
+     */
     public void move(Character dir, Rectangle r, Scene s) {
         int dx = (dir == 'r') ? 10 : -10;
         double newPos = r.getX() + dx;
@@ -379,25 +365,79 @@ public class helloFX extends Application {
         }
     }
 
+    /**
+     * Envoi de projectiles par les aliens.
+     * Les aliens tirent aléatoirement, dans une direction aléatoire (haut ou bas).
+     * @param p Panneau sur lequel les projectiles sont affichés
+     * @param r Rectangle représentant le joueur 1
+     * @param r2 Rectangle représentant le joueur 2
+     * @param s Scène sur laquelle les projectiles sont affichés
+     */
+    public void alienShoot(Pane p, Rectangle r, Rectangle r2, Scene s){
+        Random rdm = new Random();
+        List<Rectangle> players = new ArrayList<Rectangle>(); // liste des joueurs
+        players.add(r);
+        players.add(r2);
+        // every given time, random aliens shoot
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1.4), e -> {
+            if (playersLife[0] == 0 || playersLife[1] == 0 || enemies.size() == 0){
+                return;
+            }
+            int nombre_ennemis = enemies.size();
+            int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/2); // au maximum la moitié des aliens tirent
+
+            // on prend nb_aliens_shoot ennemis au hasard dans la liste des aliens
+            List<Integer> randoms = new ArrayList<Integer>();
+            for (int i = 0; i < nb_aliens_shoot; i++){
+                int random = rdm.nextInt(nombre_ennemis);
+                while (randoms.contains(random)){
+                    random = rdm.nextInt(nombre_ennemis);
+                }
+                randoms.add(random);
+            }
+
+            // on les fait tirer
+            for (int i = 0; i < nb_aliens_shoot; i++){
+                shoot(3, p, enemies.get(randoms.get(i)), players);
+            }
+        }));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+
+    /**
+     * Action de tir. Contient également les mécaniques de collision et de fin de partie.
+     * @param direction Direction du tir (sert d'option pour savoir qui a tiré)
+     * @param p Pane sur laquelle le tir est affiché
+     * @param shooter Rectangle représentant l'entité qui tire (joueur ou alien)
+     * @param targets Liste des rectangles représentant les entités qui peuvent être touchées par le tir (joueurs ou aliens)
+     */
     public void shoot(int direction, Pane p, Rectangle shooter, List <Rectangle> targets) {
         int dx;
         switch (direction) {
-            case 1 -> dx = -10;
-            case 2 -> dx = 10;
-            case 3 -> {
+            case 1: // tir du joueur 1
+                dx = -10;
+                break;
+            case 2: // tir du joueur 2
+                dx = 10;
+                break;
+            case 3: // tir d'un alien
                 Random rdm = new Random();
                 int n = rdm.nextInt(2);
                 dx = (n == 0) ? -10 : 10;
-            }
-            default -> dx = 0;
+                break;
+            default:
+                dx = 0;
         }
+
+        // Création du projectile
         Rectangle curr = bullet();
         flyingBullets.add(curr);
         p.getChildren().add(curr);
         curr.setX(shooter.getX() + shooter.getWidth() / 2 - curr.getWidth() / 2);
         curr.setY(shooter.getY() - curr.getHeight());
 
-        final boolean[] conditions = {(direction == 1) ? curr.getY() > 0 : curr.getY() < 500};
         final Boolean[] running = {true};
 
         //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
@@ -453,14 +493,14 @@ public class helloFX extends Application {
                     }
                     curr.setY(curr.getY() + finalDx);
 
-                    if (enemies.isEmpty()){
+                    if (enemies.isEmpty()){ // if all aliens are dead
                         Log.d("No enemies left");
                         curr.setX(-1);
                         running[0] = false;
                         gameOver(primStage, "No enemies left. You win!");
                         timeline.stop();
                     }
-                    if (playersLife[0] <= 0 || playersLife[1] <= 0){
+                    if (playersLife[0] <= 0 || playersLife[1] <= 0){ // if a player is dead
                         String deadPlayer = (playersLife[0] <= 0) ? "Player 1" : "Player 2";
                         String winner = (playersLife[0] <= 0) ? "Player 2" : "Player 1";
                         Log.d(deadPlayer+" died.");
@@ -469,17 +509,27 @@ public class helloFX extends Application {
                         gameOver(primStage, "No more lives left. "+deadPlayer+" is dead. "+winner+" wins!");
                         timeline.stop();
                     }
+                    if (curr.getY() < 0 || curr.getY() > p.getHeight()) {
+                        curr.setX(-1);
+                        running[0] = false;
+                        p.getChildren().remove(curr);
+                        flyingBullets.remove(curr);
+                        timeline.stop();
+                    }
                 });
         timeline.getKeyFrames().add(kf);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
 
-    private void place_enemies(List<Rectangle> enemies, int nombre_enemies, int taille_enemies, Scene s){
-        /*
-        Set placement of enemies mid-X and mid-Y, by rows of 4
-        The enemies set is on the left of the scene
-         */
+    /**
+     * Placement initial des ennemis
+     *
+     * @param nombre_enemies Nombre d'ennemis à placer
+     * @param taille_enemies Taille des ennemis
+     * @param s Scène sur laquelle les ennemis sont affichés
+     */
+    private void place_enemies(int nombre_enemies, int taille_enemies, Scene s){
         int nb_cols = 9;
         int nb_rows = nombre_enemies/nb_cols;
         int x_offset = (int) ((s.getWidth() - nb_cols*taille_enemies)/2);
@@ -490,16 +540,23 @@ public class helloFX extends Application {
             enemies.get(i).setX(x);
             enemies.get(i).setY(y);
         }
-        Log.d("Placed "+nombre_enemies+" enemies on "+nb_cols+" cols and "+nb_rows+" rows");
+        Log.d("Placed "+nombre_enemies+" enemies on "+nb_cols+" cols");
     }
 
+    /**
+     * Création d'un rectangle représentant un projectile
+     * @return Rectangle de 5x5 représentant un projectile
+     */
     public Rectangle bullet(){
         Rectangle b = new Rectangle(5, 5);
         b.setFill(Color.BLUE);
         return b;
     }
 
-    //le main lance la page home
+    /**
+     * Lancement du jeu
+     * @param args Arguments de la ligne de commande
+     */
     public static void main(String[] args) {
         launch(args);
     }
