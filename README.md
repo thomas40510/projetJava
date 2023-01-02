@@ -6,7 +6,7 @@ Cet projet est un projet de programmation orienté objet en JAVA.
 Le but est de créer un dual invaders.
 
 ### But du jeu 
-Le but du jeu est de détruire les vaisseaux ennemis en tirant sur eux. Avant qu'ils n'atteignent les bords de l'écran. 
+Le but du jeu est de détruire les vaisseaux ennemis en tirant sur eux avant qu'ils n'atteignent les bords de l'écran. 
 Le jeu se joue à 2 joueurs. 
 Le premier utilise les touches QD pour se déplacer et E pour tirer
 Le second utilise les touches fléchées pour se déplacer et la touche espace pour tirer. 
