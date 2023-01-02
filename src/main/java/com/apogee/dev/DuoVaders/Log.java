@@ -15,8 +15,19 @@ public class Log {
         return;
     }
     /** Log an error message
-    * @param msg The message to log
-    */
+     * @param tag The tag to use for the log message. Can be null
+     * @param msg The message to log
+     * @param tr An exception to log. Can be null
+     */
+    public static void e(String tag, String msg, Throwable tr){
+        //red-colored message
+        System.out.println(RED + "[LOG/E]: (" + tag + ") " + msg + RESET);
+        if(tr != null) tr.printStackTrace();
+    }
+    public static void e(String tag, String msg){
+        //red-colored message
+        System.out.println(RED + "[LOG/E]: (" + tag + ") " + msg + RESET);
+    }
     public static void e(String msg){
         //red-colored message
         System.out.println(RED + "[LOG/E]: " + msg + RESET);
@@ -24,17 +35,37 @@ public class Log {
 
     /** Log an info message
      *
+     * @param tag The tag to use for the log message. Can be null
      * @param msg The message to log
+     * @param tr An exception to log. Can be null
      */
+    public static void i(String tag, String msg, Throwable tr) {
+        System.out.println("[LOG/I]: (" + tag + ") " + msg);
+        if (tr != null) tr.printStackTrace();
+    }
+    public static void i(String tag, String msg) {
+        System.out.println("[LOG/I]: (" + tag + ") " + msg);
+    }
     public static void i(String msg){
-        //blue-colored message
         System.out.println("[LOG/I]: " + msg);
     }
 
     /** Log a debug message
      *
+     * @param tag The tag to use for the log message. Can be null
      * @param msg The message to log
+     * @param tr An exception to log. Can be null
      */
+    public static void d(String tag, String msg, Throwable tr) {
+        //blue-colored message
+        System.out.println(BLUE + "[LOG/D]: (" + tag + ") " + msg + RESET);
+        //print stack trace if exception is not null
+        if(tr != null) tr.printStackTrace();
+    }
+    public static void d(String tag, String msg) {
+        //blue-colored message
+        System.out.println(BLUE + "[LOG/D]: (" + tag + ") " + msg + RESET);
+    }
     public static void d(String msg){
         //blue-colored message
         System.out.println(BLUE + "[LOG/D]: " + msg + RESET);
