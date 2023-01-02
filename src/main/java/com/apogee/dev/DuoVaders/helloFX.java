@@ -211,7 +211,7 @@ public class helloFX extends Application {
                     try {
                         TimeUnit.MILLISECONDS.sleep(50);
                     } catch (InterruptedException e1) {
-                        e1.printStackTrace();
+                        Log.e(null,"Error while shooting", e1);
                     }
                     Platform.runLater(new Runnable() {
                         @Override
