@@ -208,8 +208,8 @@ public class helloFX extends Application {
                 }
                 //si l'ennemi est à gauche de la fenêtre
                 if (enemies.get(i).getX() <= 0) {
-                    enemies.get(i).setX(enemies.get(i).getX() + 10);
-                    enemies.get(i).setY(enemies.get(i).getY() + 10);
+                    enemies.get(i).setX(enemies.get(i).getX() + 40);
+                    enemies.get(i).setY(enemies.get(i).getY() - 40);
                     //pause pendant 10 msecondes
                     /*try {
                         Thread.sleep(10);
@@ -223,8 +223,8 @@ public class helloFX extends Application {
                 //si l'ennemi est à droite de la fenêtre
                 if (enemies.get(i).getX() >= s.getWidth() - taille_ennemis) {
                     //déplace l'ennemi vers la gauche descend d'une rangée et part vers la droite
-                    enemies.get(i).setX(enemies.get(i).getX() + 10);
-                    enemies.get(i).setY(enemies.get(i).getY() - 10);
+                    enemies.get(i).setX(enemies.get(i).getX() - 40);
+                    enemies.get(i).setY(enemies.get(i).getY() - 40);
                     //pause pendant 10 msecondes
                     /*try {
                         Thread.sleep(10);
@@ -320,14 +320,14 @@ public class helloFX extends Application {
     private void place_ennemies(List<Rectangle> enemies, int nombre_enemies, int taille_enemies, Scene s){
         /*
         Set placement of enemies mid-X and mid-Y, by rows of 4
-        The enemies set is absolutely centered on the scene
+        The enemies set is on the left of the scene
          */
         int nb_cols = 9;
         int nb_rows = nombre_enemies/nb_cols;
         int x_offset = (int) ((s.getWidth() - nb_cols*taille_enemies)/2);
         int y_offset = (int) ((s.getHeight() - nb_rows*taille_enemies)/2);
         for (int i = 0; i < nombre_enemies; i++) {
-            int x = x_offset + (i%nb_cols)*taille_enemies;
+            int x = x_offset+(i%nb_cols)*taille_enemies;
             int y = y_offset + (i/nb_cols)*taille_enemies;
             enemies.get(i).setX(x);
             enemies.get(i).setY(y);
