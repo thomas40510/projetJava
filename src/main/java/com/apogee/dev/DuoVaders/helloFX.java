@@ -58,11 +58,12 @@ public class helloFX extends Application {
 
     double[] playersLife = new double[2];
     List<Rectangle> enemies;
+    List<Rectangle> flyingBullets = new ArrayList<>();
 
     public void game(Stage primaryStage) {
         //valeur vie
         int vie_max = 20;
-        int nombre_ennemis = 35;
+        int nombre_ennemis = 15;
         int taille_ennemis = 50;
         playersLife = new double[]{vie_max, vie_max};
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
@@ -150,7 +151,6 @@ public class helloFX extends Application {
 
     public void alienShoot(Pane p, Rectangle r, Rectangle r2, Scene s){
         Random rdm = new Random();
-        int nombre_ennemis = enemies.size();
         List<Rectangle> players = new ArrayList<Rectangle>();
         players.add(r);
         players.add(r2);
@@ -159,6 +159,7 @@ public class helloFX extends Application {
             if (playersLife[0] == 0 || playersLife[1] == 0 || enemies.size() == 0){
                 return;
             }
+            int nombre_ennemis = enemies.size();
             int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/4);
             // list of nb_aliens_shoot random values
             List<Integer> randoms = new ArrayList<Integer>();
@@ -194,20 +195,21 @@ public class helloFX extends Application {
             dx = (n == 0) ? -10 : 10;
         }
         Rectangle curr = bullet();
+        flyingBullets.add(curr);
         p.getChildren().add(curr);
         curr.setX(shooter.getX() + shooter.getWidth() / 2 - curr.getWidth() / 2);
         curr.setY(shooter.getY() - curr.getHeight());
 
         curr.setX(shooter.getX() + shooter.getWidth() / 2 - curr.getWidth() / 2);
 
-        boolean condition = (direction == 1) ? curr.getY() > 0 : curr.getY() < 500;
+        boolean conditions = (direction == 1) ? curr.getY() > 0 : curr.getY() < 500;
 
         //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
         int finalDx = dx;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (condition) {
+                while (conditions) {
                     try {
                         TimeUnit.MILLISECONDS.sleep(50);
                     } catch (InterruptedException e1) {
@@ -220,11 +222,13 @@ public class helloFX extends Application {
                             //any other enemy crossing the bullet is not killed
                             if(direction != 3){
                                 for (int i = 0; i < targets.size(); i++) {
-                                    if (curr.getBoundsInParent().intersects(targets.get(i).getBoundsInParent())) {
-                                        p.getChildren().remove(targets.get(i));
+                                    Rectangle target = targets.get(i);
+                                    if (curr.getBoundsInParent().intersects(target.getBoundsInParent())) {
+                                        p.getChildren().remove(target);
                                         curr.setX(-1); // ensure no more hits
                                         p.getChildren().remove(curr);
-                                        targets.remove(targets.get(i));
+                                        targets.remove(target);
+                                        flyingBullets.remove(curr);
                                         break;
                                     }
                                 }
@@ -237,9 +241,23 @@ public class helloFX extends Application {
                                         playersLife[i]--;
                                         curr.setX(-1);
                                         p.getChildren().remove(curr);
+                                        flyingBullets.remove(curr);
                                         Log.i("Vie du vaisseau "+(i+1)+" : "+playersLife[i]);
                                         break;
                                     }
+                                }
+                            }
+                            // handle hit of another bullet
+                            for (Rectangle b : flyingBullets){
+                                if (curr.getBoundsInParent().intersects(b.getBoundsInParent()) && b != curr){
+                                    Log.d("Bullet hit another bullet at position "+curr.getX()+","+curr.getY());
+                                    curr.setX(-1);
+                                    b.setX(-1);
+                                    p.getChildren().remove(curr);
+                                    p.getChildren().remove(b);
+                                    flyingBullets.remove(b);
+                                    flyingBullets.remove(curr);
+                                    return;
                                 }
                             }
                             curr.setY(curr.getY() + finalDx);
