@@ -21,6 +21,7 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class helloFX extends Application {
 
@@ -308,7 +309,10 @@ public class helloFX extends Application {
             directions[i] = 1;
         }
 
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.1), e -> {
+        AtomicInteger bottomCount = new AtomicInteger();
+
+        Timeline timeline = new Timeline();
+        KeyFrame kf = new KeyFrame(Duration.seconds(0.1), e -> {
             int nombre_ennemis = enemies.size();
             for (int i = 0; i < nombre_ennemis; i++) {
                 //si l'ennemi est en bas de la fenêtre
@@ -323,6 +327,7 @@ public class helloFX extends Application {
                 }
                 //si l'ennemi est à gauche de la fenêtre
                 if (enemies.get(i).getX() <= 0) {
+                    bottomCount.getAndIncrement();
                     enemies.get(i).setX(enemies.get(i).getX() + 40);
                     enemies.get(i).setY(enemies.get(i).getY() - 40);
                     //pause pendant 10 msecondes
@@ -340,6 +345,7 @@ public class helloFX extends Application {
                     //déplace l'ennemi vers la gauche descend d'une rangée et part vers la droite
                     enemies.get(i).setX(enemies.get(i).getX() - 40);
                     enemies.get(i).setY(enemies.get(i).getY() - 40);
+                    bottomCount.getAndIncrement();
                     //pause pendant 10 msecondes
                     /*try {
                         Thread.sleep(10);
@@ -352,9 +358,14 @@ public class helloFX extends Application {
                 }
                 //déplace l'ennemi
                 enemies.get(i).setX(enemies.get(i).getX() + 10 * directions[i]);
-
+                Log.i("bottomCount = " + bottomCount);
+                if (bottomCount.get() == 2*nb_enemies){
+                    timeline.stop();
+                    Log.i("Stopping motion");
+                }
             }
-        }));
+        });
+        timeline.getKeyFrames().add(kf);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
     }
