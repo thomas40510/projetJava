@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import com.apogee.dev.DuoVaders.Log;
-
 public class helloFX extends Application {
 
     public void start (Stage primaryStage) {
@@ -62,7 +60,7 @@ public class helloFX extends Application {
     public void game(Stage primaryStage) {
         //valeur vie
         int vie_max = 20;
-        int nombre_ennemis = 35;
+        int nombre_ennemis = 15;
         int taille_ennemis = 50;
         playersLife = new double[]{vie_max, vie_max};
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
@@ -146,7 +144,7 @@ public class helloFX extends Application {
         primaryStage.setScene(s);
         //affiche le stage
         primaryStage.show();
-        alien_move (enemies, nombre_ennemis, taille_ennemis, s);
+        alien_move (taille_ennemis, s);
         alienShoot(p, r, r2, s);
     }
 
@@ -187,14 +185,17 @@ public class helloFX extends Application {
     */
 
 
-    public void alien_move (List<Rectangle> enemies, int nombre_ennemis, int taille_ennemis, Scene s){
+    public void alien_move (int taille_ennemis, Scene s){
+        int nb_enemies = enemies.size();
         //déplacement des ennemis
         //tableau des directions des aliens initié à 1 (droite)
-        int[] directions = new int[nombre_ennemis];
-        for (int i = 0; i < nombre_ennemis; i++){
+        int[] directions = new int[nb_enemies];
+        for (int i = 0; i < nb_enemies; i++){
             directions[i] = 1;
         }
+
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.1), e -> {
+            int nombre_ennemis = enemies.size();
             for (int i = 0; i < nombre_ennemis; i++) {
                 //si l'ennemi est en bas de la fenêtre
                 if (enemies.get(i).getY() >= s.getHeight() - taille_ennemis) {
