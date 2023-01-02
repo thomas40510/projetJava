@@ -2,27 +2,29 @@
 
 package com.apogee.dev.DuoVaders;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-import java.util.concurrent.TimeUnit;
-import java.util.*;
-import javafx.scene.text.*;
-import javafx.scene.control.Button;
-
-//import le module pour nombres aléatoires
-import java.util.Random;
-
-
-
-//importe le module de gestion des images
-import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import com.apogee.dev.DuoVaders.Log;
 
 public class helloFX extends Application {
 
@@ -54,14 +56,17 @@ public class helloFX extends Application {
     }
 
 
+    double[] playersLife = new double[2];
+    List<Rectangle> enemies;
 
     public void game(Stage primaryStage) {
         //valeur vie
-        int vie1 = 20;
+        int vie_max = 20;
         int nombre_ennemis = 35;
         int taille_ennemis = 50;
+        playersLife = new double[]{vie_max, vie_max};
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
-        List<Rectangle> enemies = new ArrayList<Rectangle>();
+        enemies = new ArrayList<Rectangle>();
         for (int i = 0; i < nombre_ennemis; i++) {
             Rectangle enemy = new Rectangle(taille_ennemis, taille_ennemis, Color.RED);
             enemies.add(enemy);
@@ -88,9 +93,9 @@ public class helloFX extends Application {
             p.getChildren().add(enemies.get(i));
         }
         //ajoute la vie au panneau (texte)
-        p.getChildren().add(new javafx.scene.text.Text(10, 20, " Vie du vaisseau 1 : " + vie1));
+        p.getChildren().add(new javafx.scene.text.Text(10, 20, " Vie du vaisseau 1 : " + playersLife[0]));
         //ajoute la vie (rectangle) en haut à gauche de la fenêtre proportionnelle à la taille
-        p.getChildren().add(new Rectangle(10, vie1 * 10, Color.CHARTREUSE));
+        p.getChildren().add(new Rectangle(10, playersLife[0] * 10, Color.CHARTREUSE));
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
         //place r au centre de la scène en bas
@@ -134,10 +139,35 @@ public class helloFX extends Application {
             }
         });
 
+
         //ajoute la scène au stage
         primaryStage.setScene(s);
         //affiche le stage
         primaryStage.show();
+
+        alienShoot(p, r, r2, s);
+    }
+
+    public void alienShoot(Pane p, Rectangle r, Rectangle r2, Scene s){
+        Random rdm = new Random();
+        int nombre_ennemis = enemies.size();
+        List<Rectangle> players = new ArrayList<Rectangle>();
+        players.add(r);
+        players.add(r2);
+        // every random time, random aliens shoot
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1.4), e -> {
+            if (playersLife[0] == 0 || playersLife[1] == 0 || enemies.size() == 0){
+                return;
+            }
+            int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/3);
+            int randomPlayer = rdm.nextInt(2);
+            //shoot(randomPlayer + 1, p, enemies.get(randomAlien), players);
+            for (int i = 0; i < nb_aliens_shoot; i++) {
+                shoot(3, p, enemies.get(i), players);
+            }
+        }));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
     public void move(Character dir, Rectangle r, Scene s) {
@@ -149,18 +179,24 @@ public class helloFX extends Application {
         }
     }
 
-    public void shoot(int direction, Pane p, Rectangle r, List <Rectangle> enemies) {
+    public void shoot(int direction, Pane p, Rectangle shooter, List <Rectangle> targets) {
         int dx = (direction == 1) ? -10 : 10;
+        if (direction == 3) {
+            Random rdm = new Random();
+            int n = rdm.nextInt(2);
+            dx = (n == 0) ? -10 : 10;
+        }
         Rectangle curr = bullet();
         p.getChildren().add(curr);
-        curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
-        curr.setY(r.getY() - curr.getHeight());
+        curr.setX(shooter.getX() + shooter.getWidth() / 2 - curr.getWidth() / 2);
+        curr.setY(shooter.getY() - curr.getHeight());
 
-        curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
+        curr.setX(shooter.getX() + shooter.getWidth() / 2 - curr.getWidth() / 2);
 
         boolean condition = (direction == 1) ? curr.getY() > 0 : curr.getY() < 500;
 
         //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
+        int finalDx = dx;
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -175,16 +211,31 @@ public class helloFX extends Application {
                         public void run() {
                             //ONLY the first enemy crossing the bullet is killed
                             //any other enemy crossing the bullet is not killed
-                            for (int i = 0; i < enemies.size(); i++) {
-                                if (curr.getBoundsInParent().intersects(enemies.get(i).getBoundsInParent())) {
-                                    p.getChildren().remove(enemies.get(i));
-                                    curr.setX(-1); // ensure no more hits
-                                    p.getChildren().remove(curr);
-                                    enemies.remove(enemies.get(i));
-                                    break;
+                            if(direction != 3){
+                                for (int i = 0; i < targets.size(); i++) {
+                                    if (curr.getBoundsInParent().intersects(targets.get(i).getBoundsInParent())) {
+                                        p.getChildren().remove(targets.get(i));
+                                        curr.setX(-1); // ensure no more hits
+                                        p.getChildren().remove(curr);
+                                        targets.remove(targets.get(i));
+                                        break;
+                                    }
+                                }
+                            } else {
+                                // shooter is an alien
+                                // if bullet hits a player, it looses life
+                                for (int i = 0; i < targets.size(); i++){
+                                    Rectangle target = targets.get(i);
+                                    if (curr.getBoundsInParent().intersects(target.getBoundsInParent())){
+                                        playersLife[i]--;
+                                        curr.setX(-1);
+                                        p.getChildren().remove(curr);
+                                        Log.i("Vie du vaisseau "+(i+1)+" : "+playersLife[i]);
+                                        break;
+                                    }
                                 }
                             }
-                            curr.setY(curr.getY() + dx);
+                            curr.setY(curr.getY() + finalDx);
                         }
                     });
                 }
@@ -207,6 +258,7 @@ public class helloFX extends Application {
             enemies.get(i).setX(x);
             enemies.get(i).setY(y);
         }
+        Log.d("Placed "+nombre_enemies+" enemies on "+nb_cols+" and "+nb_rows+" rows");
     }
 
     public Rectangle bullet(){
@@ -214,10 +266,6 @@ public class helloFX extends Application {
         b.setFill(Color.BLUE);
         return b;
     }
-
-
-
-
 
     //le main lance la page home
     public static void main(String[] args) {
