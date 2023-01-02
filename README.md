@@ -12,7 +12,10 @@ Le premier utilise les touches QD pour se déplacer et E pour tirer
 Le second utilise les touches fléchées pour se déplacer et la touche espace pour tirer. 
 
 ## Utilisation 
-Pour lancer le jeu, il faut le "run" avec Gradle.
+Pour lancer le jeu, il faut le "run" avec Gradle c'est à dire, dans l'IDE IntelliJ, 
+aller dans l'onglet "edit configuration" de run/debug configuration, ajouter une nouvelle configuration, 
+choisir Gradle, puis dans le champ "Tasks" taper "run".
+
 Le jeu se lance dans une fenêtre.
 
 ## Dépendances
