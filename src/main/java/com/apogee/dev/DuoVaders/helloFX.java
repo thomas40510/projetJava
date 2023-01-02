@@ -2,12 +2,13 @@
 
 package com.apogee.dev.DuoVaders;
 
+import com.jfoenix.controls.*;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -19,10 +20,13 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class helloFX extends Application {
 
@@ -38,13 +42,29 @@ public class helloFX extends Application {
         t.setY(s.getHeight() / 2 - t.getLayoutBounds().getHeight() / 2);
         p.getChildren().add(t);
         //ajoute le bouton pour lancer le jeu
-        Button b = new Button("Jouer");
-        b.setLayoutX(s.getWidth() / 2 - b.getLayoutBounds().getWidth() / 2);
-        b.setLayoutY(s.getHeight() / 2 - b.getLayoutBounds().getHeight() / 2 + 100);
+        JFXButton b = new JFXButton("Jouer");
+        //set style of button
+        b.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;");
+        //Button b = new Button("Jouer");
+        // centered on layout
+        double bWidth = 80;
+        double bHeight = 40;
+        b.setMinSize(bWidth, bHeight);
+        b.setMaxSize(bWidth, bHeight);
+
+        JFXButton about = new JFXButton("A propos");
+        about.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;");
+        about.setMinSize(bWidth, bHeight);
+        about.setMaxSize(bWidth, bHeight);
+
+
+        b.setLayoutX(s.getWidth() / 2 - bWidth / 2);
+        b.setLayoutY(s.getHeight() / 2 - bWidth / 2 + 50);
         p.getChildren().add(b);
         //ajoute un gestionnaire d'événements pour le bouton
         b.setOnAction(e -> {
             //lance le jeu
+            //create blurring pane with spinner on top
             game(primaryStage);
         });
         //ajoute la scène au stage
@@ -52,7 +72,6 @@ public class helloFX extends Application {
         //affiche le stage
         primaryStage.show();
     }
-
 
     double[] playersLife = new double[2];
     List<Rectangle> enemies;
