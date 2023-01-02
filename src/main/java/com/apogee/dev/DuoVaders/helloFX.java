@@ -12,6 +12,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import java.util.concurrent.TimeUnit;
 import java.util.*;
+import javafx.scene.text.*;
+import javafx.scene.control.Button;
 
 //import le module pour nombres aléatoires
 import java.util.Random;
@@ -24,8 +26,36 @@ import javafx.scene.paint.ImagePattern;
 
 public class helloFX extends Application {
 
-    @Override
-    public void start(Stage primaryStage) {
+    public void start (Stage primaryStage) {
+        //crée un panneau
+        Pane p = new Pane();
+        //crée une scène
+        Scene s = new Scene(p, 800, 600);
+        //ajoute le texte du menu
+        Text t = new Text("Menu");
+        t.setFont(new Font(50));
+        t.setX(s.getWidth() / 2 - t.getLayoutBounds().getWidth() / 2);
+        t.setY(s.getHeight() / 2 - t.getLayoutBounds().getHeight() / 2);
+        p.getChildren().add(t);
+        //ajoute le bouton pour lancer le jeu
+        Button b = new Button("Jouer");
+        b.setLayoutX(s.getWidth() / 2 - b.getLayoutBounds().getWidth() / 2);
+        b.setLayoutY(s.getHeight() / 2 - b.getLayoutBounds().getHeight() / 2 + 100);
+        p.getChildren().add(b);
+        //ajoute un gestionnaire d'événements pour le bouton
+        b.setOnAction(e -> {
+            //lance le jeu
+            game(primaryStage);
+        });
+        //ajoute la scène au stage
+        primaryStage.setScene(s);
+        //affiche le stage
+        primaryStage.show();
+    }
+
+
+
+    public void game(Stage primaryStage) {
         //valeur vie
         int vie1 = 20;
         int nombre_ennemis = 35;
@@ -103,6 +133,7 @@ public class helloFX extends Application {
                 shoot(2, p, r2, enemies);
             }
         });
+
         //ajoute la scène au stage
         primaryStage.setScene(s);
         //affiche le stage
@@ -186,6 +217,9 @@ public class helloFX extends Application {
 
 
 
+
+
+    //le main lance la page home
     public static void main(String[] args) {
         launch(args);
     }
