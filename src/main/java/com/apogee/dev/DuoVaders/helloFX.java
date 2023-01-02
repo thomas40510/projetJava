@@ -7,7 +7,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -22,7 +21,6 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class helloFX extends Application {
 
@@ -152,7 +150,7 @@ public class helloFX extends Application {
         r2.setX(s.getWidth() / 2 - r2.getWidth() / 2);
         r2.setY(0);
         // placement des ennemis
-        place_ennemies(enemies, nombre_ennemis, taille_ennemis, s);
+        place_enemies(enemies, nombre_ennemis, taille_ennemis, s);
 
 
 
@@ -207,17 +205,18 @@ public class helloFX extends Application {
         //crée une scène
         Scene s = new Scene(p, 800, 600);
         //ajoute le texte du menu
-        Text title = new Text("Game over!");
+        Text title = new Text("Game Over!");
         title.setFont(new Font(50));
         title.setX(s.getWidth() / 2 - title.getLayoutBounds().getWidth() / 2);
         title.setY(s.getHeight() / 2 - title.getLayoutBounds().getHeight() / 2);
         p.getChildren().add(title);
         Text m = new Text(msg);
         m.setFont(new Font(18));
-        m.setStyle("-fx-color-label-visible: #4d4d4d");
+        m.setStyle("-fx-color-label-visible: #acacac");
         //place below title
         m.setX(s.getWidth() / 2 - m.getLayoutBounds().getWidth() / 2);
-        m.setY(s.getHeight() / 2 - m.getLayoutBounds().getHeight() / 2 + 50);
+        m.setY(s.getHeight() / 2 - m.getLayoutBounds().getHeight() / 2 + 10);
+        p.getChildren().add(m);
 
         //ajoute le bouton pour lancer le jeu
         JFXButton b = new JFXButton("Rejouer");
@@ -274,7 +273,7 @@ public class helloFX extends Application {
                 return;
             }
             int nombre_ennemis = enemies.size();
-            int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/4);
+            int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/2);
             // list of nb_aliens_shoot random values
             List<Integer> randoms = new ArrayList<Integer>();
             for (int i = 0; i < nb_aliens_shoot; i++){
@@ -387,87 +386,85 @@ public class helloFX extends Application {
         curr.setX(shooter.getX() + shooter.getWidth() / 2 - curr.getWidth() / 2);
         curr.setY(shooter.getY() - curr.getHeight());
 
-        curr.setX(shooter.getX() + shooter.getWidth() / 2 - curr.getWidth() / 2);
-
         final boolean[] conditions = {(direction == 1) ? curr.getY() > 0 : curr.getY() < 500};
         final Boolean[] running = {true};
 
         //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
         int finalDx = dx;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (curr.getY() > 0 && curr.getY() < 500 && curr.getX() != -1 && running[0]) {
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(50);
-                    } catch (InterruptedException e1) {
-                        Log.e(null,"Error while shooting", e1);
-                    }
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            //ONLY the first enemy crossing the bullet is killed
-                            //any other enemy crossing the bullet is not killed
-                            if(direction != 3){
-                                for (int i = 0; i < targets.size(); i++) {
-                                    Rectangle target = targets.get(i);
-                                    if (curr.getBoundsInParent().intersects(target.getBoundsInParent())) {
-                                        p.getChildren().remove(target);
-                                        curr.setX(-1); // ensure no more hits
-                                        p.getChildren().remove(curr);
-                                        targets.remove(target);
-                                        flyingBullets.remove(curr);
-                                        running[0] = false;
-                                        break;
-                                    }
-                                }
-                            } else {
-                                // shooter is an alien
-                                // if bullet hits a player, it looses life
-                                for (int i = 0; i < targets.size(); i++){
-                                    Rectangle target = targets.get(i);
-                                    if (curr.getBoundsInParent().intersects(target.getBoundsInParent())){
-                                        playersLife[i]--;
-                                        curr.setX(-1);
-                                        p.getChildren().remove(curr);
-                                        flyingBullets.remove(curr);
-                                        Log.i("Vie du vaisseau "+(i+1)+" : "+playersLife[i]);
-                                        running[0] = false;
-                                        break;
-                                    }
-                                }
-                            }
-                            // handle hit of another bullet
-                            for (Rectangle b : flyingBullets){
-                                if (curr.getBoundsInParent().intersects(b.getBoundsInParent()) && b != curr){
-                                    Log.d("Bullet hit another bullet at position "+curr.getX()+","+curr.getY());
-                                    curr.setX(-1);
-                                    b.setX(-1);
-                                    p.getChildren().remove(curr);
-                                    p.getChildren().remove(b);
-                                    flyingBullets.remove(b);
-                                    flyingBullets.remove(curr);
-                                    running[0] = false;
-                                    return;
-                                }
-                            }
-                            curr.setY(curr.getY() + finalDx);
-
-                            if (enemies.isEmpty()){
-                                Log.d("No enemies left");
-                                curr.setX(-1);
+        Timeline timeline = new Timeline();
+        KeyFrame kf = new KeyFrame(Duration.millis(50),
+                event -> {
+                    //ONLY the first enemy crossing the bullet is killed
+                    //any other enemy crossing the bullet is not killed
+                    if(direction != 3){
+                        for (int i = 0; i < targets.size(); i++) {
+                            Rectangle target = targets.get(i);
+                            if (curr.getBoundsInParent().intersects(target.getBoundsInParent())) {
+                                p.getChildren().remove(target);
+                                curr.setX(-1); // ensure no more hits
+                                p.getChildren().remove(curr);
+                                targets.remove(target);
+                                flyingBullets.remove(curr);
                                 running[0] = false;
-                                gameOver(primStage, "No enemies left. You win!");
+                                break;
                             }
-
                         }
-                    });
-                }
-            }
-        }).start();
+                    } else {
+                        // shooter is an alien
+                        // if bullet hits a player, it looses life
+                        for (int i = 0; i < targets.size(); i++){
+                            Rectangle target = targets.get(i);
+                            if (curr.getBoundsInParent().intersects(target.getBoundsInParent())){
+                                playersLife[i]--;
+                                curr.setX(-1);
+                                p.getChildren().remove(curr);
+                                flyingBullets.remove(curr);
+                                Log.i("Vie du vaisseau "+(i+1)+" : "+playersLife[i]);
+                                running[0] = false;
+                                break;
+                            }
+                        }
+                    }
+                    // handle hit of another bullet
+                    for (Rectangle b : flyingBullets){
+                        if (curr.getBoundsInParent().intersects(b.getBoundsInParent()) && b != curr){
+                            Log.d("Bullet hit another bullet at position "+curr.getX()+","+curr.getY());
+                            curr.setX(-1);
+                            b.setX(-1);
+                            p.getChildren().remove(curr);
+                            p.getChildren().remove(b);
+                            flyingBullets.remove(b);
+                            flyingBullets.remove(curr);
+                            running[0] = false;
+                            timeline.stop();
+                            return;
+                        }
+                    }
+                    curr.setY(curr.getY() + finalDx);
+
+                    if (enemies.isEmpty()){
+                        Log.d("No enemies left");
+                        curr.setX(-1);
+                        running[0] = false;
+                        gameOver(primStage, "No enemies left. You win!");
+                        timeline.stop();
+                    }
+                    if (playersLife[0] <= 0 || playersLife[1] <= 0){
+                        String deadPlayer = (playersLife[0] <= 0) ? "Player 1" : "Player 2";
+                        String winner = (playersLife[0] <= 0) ? "Player 2" : "Player 1";
+                        Log.d(deadPlayer+" died.");
+                        curr.setX(-1);
+                        running[0] = false;
+                        gameOver(primStage, "No more lives left. "+deadPlayer+" is dead. "+winner+" wins!");
+                        timeline.stop();
+                    }
+                });
+        timeline.getKeyFrames().add(kf);
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
     }
 
-    private void place_ennemies(List<Rectangle> enemies, int nombre_enemies, int taille_enemies, Scene s){
+    private void place_enemies(List<Rectangle> enemies, int nombre_enemies, int taille_enemies, Scene s){
         /*
         Set placement of enemies mid-X and mid-Y, by rows of 4
         The enemies set is on the left of the scene
@@ -482,7 +479,7 @@ public class helloFX extends Application {
             enemies.get(i).setX(x);
             enemies.get(i).setY(y);
         }
-        Log.d("Placed "+nombre_enemies+" enemies on "+nb_cols+" and "+nb_rows+" rows");
+        Log.d("Placed "+nombre_enemies+" enemies on "+nb_cols+" cols and "+nb_rows+" rows");
     }
 
     public Rectangle bullet(){
