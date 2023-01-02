@@ -107,6 +107,8 @@ public class helloFX extends Application {
         // placement des ennemis
         place_ennemies(enemies, nombre_ennemis, taille_ennemis, s);
 
+
+
         //ajoute un gestionnaire d'événements pour les touches du clavier
         s.setOnKeyPressed(e -> {
             //si la touche est la flèche de droite
@@ -144,7 +146,7 @@ public class helloFX extends Application {
         primaryStage.setScene(s);
         //affiche le stage
         primaryStage.show();
-
+        alien_move (enemies, nombre_ennemis, taille_ennemis, s);
         alienShoot(p, r, r2, s);
     }
 
@@ -171,6 +173,71 @@ public class helloFX extends Application {
             }
             for (int i = 0; i < nb_aliens_shoot; i++){
                 shoot(3, p, enemies.get(randoms.get(i)), players);
+            }
+        }));
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.play();
+    }
+
+    //deplacement aliens
+    /*
+     déplacement des ennemis (L'armada alien verticale part de la gauche de l'écran et se déplace horizontalement de gauche à droite.
+     Lorsqu'elle atteint le côté droit de l'écran, elle descend d'une rangée et se déplace de droite à gauche.
+     Lorsqu'elle atteint le côté gauche de l'écran, elle descend d'une rangée et se déplace à nouveau vers la droite.
+    */
+
+
+    public void alien_move (List<Rectangle> enemies, int nombre_ennemis, int taille_ennemis, Scene s){
+        //déplacement des ennemis
+        //tableau des directions des aliens initié à 1 (droite)
+        int[] directions = new int[nombre_ennemis];
+        for (int i = 0; i < nombre_ennemis; i++){
+            directions[i] = 1;
+        }
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(0.1), e -> {
+            for (int i = 0; i < nombre_ennemis; i++) {
+                //si l'ennemi est en bas de la fenêtre
+                if (enemies.get(i).getY() >= s.getHeight() - taille_ennemis) {
+                    //le jeu est perdu
+                    //System.out.println("Game Over");
+                }
+                //si l'ennemi est en haut de la fenêtre
+                if (enemies.get(i).getY() <= 0) {
+                    //le jeu est perdu
+                    //System.out.println("Game Over");
+                }
+                //si l'ennemi est à gauche de la fenêtre
+                if (enemies.get(i).getX() <= 0) {
+                    enemies.get(i).setX(enemies.get(i).getX() + 10);
+                    enemies.get(i).setY(enemies.get(i).getY() + 10);
+                    //pause pendant 10 msecondes
+                    /*try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                       */
+                    //change la direction de l'ennemi
+                    directions[i] = 1;
+                }
+                //si l'ennemi est à droite de la fenêtre
+                if (enemies.get(i).getX() >= s.getWidth() - taille_ennemis) {
+                    //déplace l'ennemi vers la gauche descend d'une rangée et part vers la droite
+                    enemies.get(i).setX(enemies.get(i).getX() + 10);
+                    enemies.get(i).setY(enemies.get(i).getY() - 10);
+                    //pause pendant 10 msecondes
+                    /*try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                    }
+                       */
+                    //change la direction de l'ennemi
+                    directions[i] = -1;
+                }
+                //déplace l'ennemi
+                enemies.get(i).setX(enemies.get(i).getX() + 10 * directions[i]);
+
             }
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
