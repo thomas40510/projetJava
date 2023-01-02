@@ -12,6 +12,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import java.util.concurrent.TimeUnit;
 import java.util.*;
+import javafx.scene.text.*;
+import javafx.scene.control.Button;
 
 //import le module pour nombres aléatoires
 import java.util.Random;
@@ -24,21 +26,49 @@ import javafx.scene.paint.ImagePattern;
 
 public class helloFX extends Application {
 
-    @Override
-    public void start(Stage primaryStage) {
+    public void start (Stage primaryStage) {
+        //crée un panneau
+        Pane p = new Pane();
+        //crée une scène
+        Scene s = new Scene(p, 800, 600);
+        //ajoute le texte du menu
+        Text t = new Text("Menu");
+        t.setFont(new Font(50));
+        t.setX(s.getWidth() / 2 - t.getLayoutBounds().getWidth() / 2);
+        t.setY(s.getHeight() / 2 - t.getLayoutBounds().getHeight() / 2);
+        p.getChildren().add(t);
+        //ajoute le bouton pour lancer le jeu
+        Button b = new Button("Jouer");
+        b.setLayoutX(s.getWidth() / 2 - b.getLayoutBounds().getWidth() / 2);
+        b.setLayoutY(s.getHeight() / 2 - b.getLayoutBounds().getHeight() / 2 + 100);
+        p.getChildren().add(b);
+        //ajoute un gestionnaire d'événements pour le bouton
+        b.setOnAction(e -> {
+            //lance le jeu
+            game(primaryStage);
+        });
+        //ajoute la scène au stage
+        primaryStage.setScene(s);
+        //affiche le stage
+        primaryStage.show();
+    }
+
+
+
+    public void game(Stage primaryStage) {
         //valeur vie
         int vie1 = 20;
-        int nombre_ennemis = 5;
+        int nombre_ennemis = 35;
         int taille_ennemis = 50;
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
         List<Rectangle> enemies = new ArrayList<Rectangle>();
-        for (int i = 0; i <= nombre_ennemis; i++) {
+        for (int i = 0; i < nombre_ennemis; i++) {
             Rectangle enemy = new Rectangle(taille_ennemis, taille_ennemis, Color.RED);
             enemies.add(enemy);
         }
         Image alien = new Image("https://static.vecteezy.com/ti/vecteur-libre/p3/3134697-dessin-illustration-du-vaisseau-spatial-gratuit-vectoriel.jpg");
         //donne l'image alien aux ennemis
-        for (int i = 0; i <= nombre_ennemis; i++) {
+        for (int i = 0; i < nombre_ennemis; i++) {
             enemies.get(i).setFill(new ImagePattern(alien));
         }
         //créé un rectangle de la taille de images\vaisseau.png (player)
@@ -54,7 +84,7 @@ public class helloFX extends Application {
         //ajoute les rectangles au panneau
         p.getChildren().add(r);
         p.getChildren().add(r2);
-        for (int i = 0; i <= nombre_ennemis; i++) {
+        for (int i = 0; i < nombre_ennemis; i++) {
             p.getChildren().add(enemies.get(i));
         }
         //ajoute la vie au panneau (texte)
@@ -69,134 +99,114 @@ public class helloFX extends Application {
         //place r2 au centre de la scène en haut
         r2.setX(s.getWidth() / 2 - r2.getWidth() / 2);
         r2.setY(0);
-        //place les ennemis au centre de la scène (todo : à gerer avec une fonction/non fonctionnel à plus de 9 ennemis/à optimiser)
-        for (int i = 0; i <= nombre_ennemis; i++) {
-            if (nombre_ennemis > 9) {
-                if (i<nombre_ennemis/4) {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis * i);
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 + 100 );
-                }
-                if (i>=nombre_ennemis/4 && i<nombre_ennemis/2) {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis * (i-nombre_ennemis/4));
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 + 100);
-                }
-                if (i>=nombre_ennemis/2 && i<nombre_ennemis*3/4) {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis *(i/2));
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 - 100);
-                }
-                else {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 + taille_ennemis * ((i/2)-nombre_ennemis/4));
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 - 100);
-                }
-            }
-            else {
-                if (i<nombre_ennemis/2) {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 - taille_ennemis * (i+1));
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2 );
-                }
-                else {
-                    enemies.get(i).setX(s.getWidth() / 2 - enemies.get(i).getWidth() / 2 + taille_ennemis * (i-nombre_ennemis/2));
-                    enemies.get(i).setY(s.getHeight() / 2 - enemies.get(i).getHeight() / 2);
-                }
-            }
-        }
+        // placement des ennemis
+        place_ennemies(enemies, nombre_ennemis, taille_ennemis, s);
+
         //ajoute un gestionnaire d'événements pour les touches du clavier
         s.setOnKeyPressed(e -> {
             //si la touche est la flèche de droite
             if (e.getCode() == KeyCode.RIGHT) {
                 //déplace le rectangle de 10 pixels vers la droite
-                r.setX(r.getX() + 10);
+                move('r', r, s);
             }
             //si la touche est la flèche de gauche
             if (e.getCode() == KeyCode.LEFT) {
                 //déplace le rectangle de 10 pixels vers la gauche
-                r.setX(r.getX() - 10);
+                move('l', r, s);
             }
             //si la touche est la touhce q
             if (e.getCode() == KeyCode.Q) {
                 //déplace le rectangle de 10 pixels vers la gauche
-                r2.setX(r2.getX() - 10);
+                move('l', r2, s);
             }
             //si la touche est la touche d
             if (e.getCode() == KeyCode.D) {
                 //déplace le rectangle de 10 pixels vers la droite
-                r2.setX(r2.getX() + 10);
+                move('r', r2, s);
             }
             //si la touche est la touche espace, ajoute un projectile au niveau du vaisseau r
             if (e.getCode() == KeyCode.SPACE) {
-                //ajoute le rectangle b au panneau
-                Rectangle curr = bullet();
-                p.getChildren().add(curr);
-                curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
-                curr.setY(r.getY() - curr.getHeight());
-
-                curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
-                //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while (curr.getY() > 0) {
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(50);
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // handle collisions
-                                    for (int i = 0; i < enemies.size(); i++) {
-                                        Rectangle enm = enemies.get(i);
-                                        if (curr.getBoundsInParent().intersects(enm.getBoundsInParent()) && p.getChildren().contains(enm)) {
-                                            p.getChildren().remove(enm);
-                                            p.getChildren().remove(curr);
-                                            enemies.remove(i);
-                                        }
-                                    }
-                                    curr.setY(curr.getY() - 10);
-
-                                }
-                            });
-                        }
-                    }
-                }).start();
+                shoot(1, p, r, enemies);
             }
             // si la touche est la touche e, ajoute un projectile au niveau du vaisseau r2
             if (e.getCode() == KeyCode.E) {
-
-                Rectangle curr2 = bullet();
-                p.getChildren().add(curr2);
-                curr2.setX(r2.getX() + r2.getWidth() / 2 - curr2.getWidth() / 2);
-                curr2.setY(r2.getY() - curr2.getHeight());
-
-                curr2.setX(r2.getX() + r2.getWidth() / 2 - curr2.getWidth() / 2);
-
-                //déplace le rectangle de 10 pixels vers le bas automatiquement toutes les 0.5s
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //while inferieur à la taille de la fenetre
-                        while (curr2.getY() < s.getHeight() ) {
-                            try {
-                                TimeUnit.MILLISECONDS.sleep(50);
-                            } catch (InterruptedException e1) {
-                                e1.printStackTrace();
-                            }
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    curr2.setY(curr2.getY() + 10);
-                                }
-                            });
-                        }
-                    }
-                }).start();
+                shoot(2, p, r2, enemies);
             }
         });
+
         //ajoute la scène au stage
         primaryStage.setScene(s);
         //affiche le stage
         primaryStage.show();
+    }
+
+    public void move(Character dir, Rectangle r, Scene s) {
+        int dx = (dir == 'r') ? 10 : -10;
+        double newPos = r.getX() + dx;
+
+        if (newPos >= 0 && newPos <= s.getWidth() - r.getWidth()) {
+            r.setX(newPos);
+        }
+    }
+
+    public void shoot(int direction, Pane p, Rectangle r, List <Rectangle> enemies) {
+        int dx = (direction == 1) ? -10 : 10;
+        Rectangle curr = bullet();
+        p.getChildren().add(curr);
+        curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
+        curr.setY(r.getY() - curr.getHeight());
+
+        curr.setX(r.getX() + r.getWidth() / 2 - curr.getWidth() / 2);
+
+        boolean condition = (direction == 1) ? curr.getY() > 0 : curr.getY() < 500;
+
+        //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (condition) {
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(50);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            //ONLY the first enemy crossing the bullet is killed
+                            //any other enemy crossing the bullet is not killed
+                            for (int i = 0; i < enemies.size(); i++) {
+                                if (curr.getBoundsInParent().intersects(enemies.get(i).getBoundsInParent())) {
+                                    p.getChildren().remove(enemies.get(i));
+                                    curr.setX(-1); // ensure no more hits
+                                    p.getChildren().remove(curr);
+                                    enemies.remove(enemies.get(i));
+                                    break;
+                                }
+                            }
+                            curr.setY(curr.getY() + dx);
+                        }
+                    });
+                }
+            }
+        }).start();
+    }
+
+    private void place_ennemies(List<Rectangle> enemies, int nombre_enemies, int taille_enemies, Scene s){
+        /*
+        Set placement of enemies mid-X and mid-Y, by rows of 4
+        The enemies set is absolutely centered on the scene
+         */
+        int nb_cols = 9;
+        int nb_rows = nombre_enemies/nb_cols;
+        int x_offset = (int) ((s.getWidth() - nb_cols*taille_enemies)/2);
+        int y_offset = (int) ((s.getHeight() - nb_rows*taille_enemies)/2);
+        for (int i = 0; i < nombre_enemies; i++) {
+            int x = x_offset + (i%nb_cols)*taille_enemies;
+            int y = y_offset + (i/nb_cols)*taille_enemies;
+            enemies.get(i).setX(x);
+            enemies.get(i).setY(y);
+        }
     }
 
     public Rectangle bullet(){
@@ -207,6 +217,9 @@ public class helloFX extends Application {
 
 
 
+
+
+    //le main lance la page home
     public static void main(String[] args) {
         launch(args);
     }
