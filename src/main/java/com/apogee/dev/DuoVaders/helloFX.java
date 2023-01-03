@@ -13,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -102,6 +103,15 @@ public class helloFX extends Application {
     double[] playersLife = new double[2];
     List<Rectangle> enemies;
     List<Rectangle> flyingBullets = new ArrayList<>();
+    Rectangle viePlayer1;
+    Rectangle viePlayer2;
+    Text lifeTxt1;
+    Text lifeTxt2;
+
+    int vie_max = 20;
+    int nombre_ennemis = 25;
+    int taille_ennemis = 40;
+
 
     /**
      * Main game method - instantiate all the game objects, start game loops and handle mechanics
@@ -112,9 +122,6 @@ public class helloFX extends Application {
      */
     public void game(Stage primaryStage) {
         //valeur vie
-        int vie_max = 20;
-        int nombre_ennemis = 25;
-        int taille_ennemis = 40;
         playersLife = new double[]{vie_max, vie_max}; //vie des joueurs (0 = joueur 1, 1 = joueur 2
 
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
@@ -161,9 +168,19 @@ public class helloFX extends Application {
         p.getChildren().addAll(enemies);
 
         //ajoute la vie au panneau (texte)
-        p.getChildren().add(new javafx.scene.text.Text(10, 20, " Vie du vaisseau 1 : " + playersLife[0]));
+        lifeTxt1 = new Text(356, 480, " Vie du vaisseau 1 : " + playersLife[0]);
+        p.getChildren().add(lifeTxt1);
         //ajoute la vie (rectangle) en haut à gauche de la fenêtre proportionnelle à la taille
-        p.getChildren().add(new Rectangle(10, playersLife[0] * 10, Color.CHARTREUSE));
+        viePlayer1 = new Rectangle(10, playersLife[0] * 10, Color.CHARTREUSE);
+        viePlayer1.setLayoutX(500 - viePlayer1.getWidth());
+        viePlayer1.setLayoutY(500 - viePlayer1.getHeight());
+
+        p.getChildren().add(viePlayer1);
+        // vie du vaisseau 2 en bas à droite
+        lifeTxt2 = new Text(10, 20, " Vie du vaisseau 2 : " + playersLife[1]);
+        p.getChildren().add(lifeTxt2);
+        viePlayer2 = new Rectangle(10, playersLife[1] * 10, Color.CHARTREUSE);
+        p.getChildren().add(viePlayer2);
 
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
@@ -415,12 +432,15 @@ public class helloFX extends Application {
      */
     public void shoot(int direction, Pane p, Rectangle shooter, List <Rectangle> targets) {
         int dx;
+        int shootingShip = -1;
         switch (direction) {
             case 1: // tir du joueur 1
                 dx = -10;
+                shootingShip = 0;
                 break;
             case 2: // tir du joueur 2
                 dx = 10;
+                shootingShip = 1;
                 break;
             case 3: // tir d'un alien
                 Random rdm = new Random();
@@ -471,6 +491,7 @@ public class helloFX extends Application {
                                 p.getChildren().remove(curr);
                                 flyingBullets.remove(curr);
                                 Log.i("Vie du vaisseau "+(i+1)+" : "+playersLife[i]);
+                                updateCounters();
                                 running[0] = false;
                                 break;
                             }
@@ -520,6 +541,17 @@ public class helloFX extends Application {
         timeline.getKeyFrames().add(kf);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+    }
+
+    public void updateCounters(){
+        Platform.runLater(() -> {
+            lifeTxt1.setText(" Vie du vaisseau 1 : " + playersLife[0]);
+            lifeTxt2.setText(" Vie du vaisseau 2 : " + playersLife[1]);
+            viePlayer1.setHeight(playersLife[0]*10);
+            viePlayer2.setHeight(playersLife[1]*10);
+
+            viePlayer1.setLayoutY(primStage.getHeight() - viePlayer1.getHeight() + 10);
+        });
     }
 
     /**
