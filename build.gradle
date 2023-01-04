@@ -28,4 +28,4 @@ test {
     useJUnitPlatform()
 }
 
-mainClassName = 'com.apogee.dev.DuoVaders.helloFX'
+mainClassName = 'com.apogee.dev.DuoVaders.DualVaders'
