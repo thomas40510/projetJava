@@ -8,6 +8,7 @@
 package com.apogee.dev.DuoVaders;
 
 import com.jfoenix.controls.*;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
@@ -26,6 +27,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.File;
+import java.sql.Time;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -106,9 +108,11 @@ public class helloFX extends Application {
     List<Rectangle> flyingBullets = new ArrayList<>();
     Rectangle viePlayer1;
     Rectangle viePlayer2;
-    Text lifeTxt1, lifeTxt2, scoreTxt1, scoreTxt2;
+    Text lifeTxt1, lifeTxt2, scoreTxt1, scoreTxt2, timerTxt;
 
-    int vie_max = 20;
+    double timeElapsed = 0;
+
+    int vie_max = 10;
     int nombre_ennemis = 25;
     int taille_ennemis = 40;
 
@@ -186,6 +190,10 @@ public class helloFX extends Application {
         viePlayer2 = new Rectangle(10, playersLife[1] * 10, Color.CHARTREUSE);
         p.getChildren().add(viePlayer2);
 
+        // Timer top right
+        timerTxt = new Text(420, 20, " Temps : " + timeElapsed);
+        p.getChildren().add(timerTxt);
+
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
         //place r au centre de la scène en bas
@@ -239,6 +247,7 @@ public class helloFX extends Application {
 
         alienMove(taille_ennemis, s); // déplacement des aliens
         alienShoot(p, r, r2, s);  // tirs des aliens
+        timer(); // timer
 
     }
 
@@ -261,7 +270,7 @@ public class helloFX extends Application {
         p.getChildren().add(title);
 
         // message
-        Text m = new Text(msg);
+        Text m = new Text(msg + " Temps de jeu : " + timeElapsed + "s");
         m.setFont(new Font(18));
         m.setStyle("-fx-color-label-visible: #acacac");
         m.setX(s.getWidth() / 2 - m.getLayoutBounds().getWidth() / 2);
@@ -307,6 +316,21 @@ public class helloFX extends Application {
         primaryStage.setScene(s);
         //affiche le stage
         primaryStage.show();
+    }
+
+    /**
+     * Permet au timer de s'incrémenter toutes les 10 millisecondes
+     */
+    public void timer() {
+        // Timer
+        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), ev -> {
+            timeElapsed += 0.01;
+            // round to 2 decimals
+            timeElapsed = Math.round(timeElapsed * 100.0) / 100.0;
+            timerTxt.setText(" Temps : " + timeElapsed);
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
     }
 
     /**
