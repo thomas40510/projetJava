@@ -24,7 +24,8 @@ public class Alien extends Rectangle implements Ship {
 
     @Override
     public void die() {
-
+        this.pane.getChildren().remove(this);
+        DualVaders.enemies.remove(this);
     }
 
     @Override

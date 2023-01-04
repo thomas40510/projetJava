@@ -34,12 +34,12 @@ public class Player extends Rectangle implements Ship {
 
     @Override
     public void shoot() {
-        Rectangle bullet = new Bullet(this.canonType);
+        Rectangle bullet = new Bullet(this.canonType, "blue");
         DualVaders.flyingBullets.add(bullet);
 
         this.pane.getChildren().add(bullet);
         bullet.setX(this.getX() + this.width / 2 - bullet.getWidth() / 2);
-        bullet.setY(this.getY() - bullet.getHeight());
+        bullet.setY(this.getY());
 
         Timeline timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -47,15 +47,14 @@ public class Player extends Rectangle implements Ship {
         List<Alien> targets = DualVaders.enemies;
 
         KeyFrame kf = new KeyFrame(javafx.util.Duration.seconds(0.01), e -> {
-            bullet.setY(bullet.getY() - 10);
             if (bullet.getY() < 0 || bullet.getY() > this.scene.getHeight()) {
                 timeline.stop();
                 DualVaders.flyingBullets.remove(bullet);
                 this.pane.getChildren().remove(bullet);
             }
-            for (int i = 0; i < targets.size(); i++){
-                if (bullet.getBoundsInParent().intersects(targets.get(i).getBoundsInParent())) {
-                    targets.get(i).die();
+            for (Alien target : targets) {
+                if (bullet.getBoundsInParent().intersects(target.getBoundsInParent())) {
+                    target.die();
                     this.score++;
                     DualVaders.flyingBullets.remove(bullet);
                     this.pane.getChildren().remove(bullet);
@@ -64,28 +63,11 @@ public class Player extends Rectangle implements Ship {
                     break;
                 }
             }
-
+            bullet.setY(bullet.getY() + this.shootDirection);
         });
 
-        //        KeyFrame kf = new KeyFrame(Duration.millis(50),
-//                event -> {
-//                    //ONLY the first enemy crossing the bullet is killed
-//                    //any other enemy crossing the bullet is not killed
-//                    if(direction != 3){
-//                        for (int i = 0; i < targets.size(); i++) {
-//                            Rectangle target = targets.get(i);
-//                            if (curr.getBoundsInParent().intersects(target.getBoundsInParent())) {
-//                                p.getChildren().remove(target);
-//                                curr.setX(-1); // ensure no more hits
-//                                p.getChildren().remove(curr);
-//                                targets.remove(target);
-//                                flyingBullets.remove(curr);
-//                                playersScore[finalShootingShip]++;
-//                                updateCounters();
-//                                running[0] = false;
-//                                break;
-//                            }
-
+        timeline.getKeyFrames().add(kf);
+        timeline.play();
 
     }
 
@@ -96,7 +78,7 @@ public class Player extends Rectangle implements Ship {
 
     @Override
     public int getHealth() {
-        return 0;
+        return this.life;
     }
 
     public KeyCode getKeyCode(char key) {

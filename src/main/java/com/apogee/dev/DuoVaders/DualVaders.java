@@ -97,7 +97,6 @@ public class DualVaders extends Application {
     /**********************
      * Variables globales *
      **********************/
-    static int[] playersLife = new int[2];
     static int[] playersScore = {0, 0};
     static List<Alien> enemies;
     static List<Rectangle> flyingBullets = new ArrayList<>();
@@ -115,7 +114,7 @@ public class DualVaders extends Application {
     int nombre_ennemis = 25;
     int taille_ennemis = 40;
 
-    ArrayList<Player> players = new ArrayList<>();
+    static ArrayList<Player> players = new ArrayList<>();
 
 
     /**
@@ -126,8 +125,6 @@ public class DualVaders extends Application {
      * primary stages.
      */
     public void game(Stage primaryStage) {
-        //valeur vie
-        playersLife = new int[]{vie_max, vie_max}; //vie des joueurs (0 = joueur 1, 1 = joueur 2
 
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
         enemies = new ArrayList<Alien>();
@@ -156,22 +153,22 @@ public class DualVaders extends Application {
         p.getChildren().addAll(enemies);
 
         //vie et score du vaisseau 2 en haut à gauche
-        lifeTxt1 = new Text(356, 480, " Vie du vaisseau 1 : " + playersLife[0]);
+        lifeTxt1 = new Text(356, 480, " Vie du vaisseau 1 : " + r.getHealth());
         p.getChildren().add(lifeTxt1);
         scoreTxt1 = new Text(400, 465, " Score 1 : " + playersScore[0]);
         p.getChildren().add(scoreTxt1);
         //ajoute la vie (rectangle) en haut à gauche de la fenêtre proportionnelle à la taille
-        viePlayer1 = new Rectangle(10, playersLife[0] * 10, Color.CHARTREUSE);
+        viePlayer1 = new Rectangle(10, r.getHealth() * 10, Color.CHARTREUSE);
         viePlayer1.setLayoutX(500 - viePlayer1.getWidth());
         viePlayer1.setLayoutY(500 - viePlayer1.getHeight());
         p.getChildren().add(viePlayer1);
 
         // vie et score du vaisseau 1 en bas à droite
-        lifeTxt2 = new Text(10, 20, " Vie du vaisseau 2 : " + playersLife[1]);
+        lifeTxt2 = new Text(10, 20, " Vie du vaisseau 2 : " + r2.getHealth());
         p.getChildren().add(lifeTxt2);
         scoreTxt2 = new Text(10, 35, " Score 2 : " + playersScore[1]);
         p.getChildren().add(scoreTxt2);
-        viePlayer2 = new Rectangle(10, playersLife[1] * 10, Color.CHARTREUSE);
+        viePlayer2 = new Rectangle(10, r2.getHealth() * 10, Color.CHARTREUSE);
         p.getChildren().add(viePlayer2);
 
         // Timer top right
@@ -199,6 +196,7 @@ public class DualVaders extends Application {
                     player.shoot();
                 }
             }
+            checkWin(r, r2);
         });
 
 
@@ -213,6 +211,25 @@ public class DualVaders extends Application {
         alienShoot(p, r, r2, s);  // tirs des aliens
         timer(); // timer
 
+    }
+
+    public void checkWin(Player r, Player r2){
+        String msg = "";
+        Log.d("Vie du vaisseau 1 : " + r.getHealth());
+        Log.d("Vie du vaisseau 2 : " + r2.getHealth());
+        if(r.getHealth() <= 0){
+            Log.i("Over. Player 1 died");
+            msg = "Player 1 died. Player 2 wins!";
+        }
+        if (r2.getHealth() <= 0){
+            Log.i("Over. Player 2 died");
+            msg = "Player 2 died. Player 1 wins!";
+        }
+        if (enemies.size() == 0){
+            Log.i("Over. All aliens died");
+            msg = "All aliens died. Players win!";
+        }
+        if (!msg.equals("")) gameOver(primStage, msg);
     }
 
     /**
@@ -389,9 +406,6 @@ public class DualVaders extends Application {
         players.add(r2);
         // every given time, random aliens shoot
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1.4), e -> {
-            if (playersLife[0] == 0 || playersLife[1] == 0 || enemies.size() == 0){
-                return;
-            }
             int nombre_ennemis = enemies.size();
             int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/2); // au maximum la moitié des aliens tirent
 
@@ -544,10 +558,12 @@ public class DualVaders extends Application {
      */
     public static void updateCounters(){
         Platform.runLater(() -> {
-            lifeTxt1.setText(" Vie du vaisseau 1 : " + playersLife[0]);
-            lifeTxt2.setText(" Vie du vaisseau 2 : " + playersLife[1]);
-            viePlayer1.setHeight(playersLife[0]*10);
-            viePlayer2.setHeight(playersLife[1]*10);
+            int lifeP1 = players.get(0).getHealth();
+            int lifeP2 = players.get(1).getHealth();
+            lifeTxt1.setText(" Vie du vaisseau 1 : " + lifeP1);
+            lifeTxt2.setText(" Vie du vaisseau 2 : " + lifeP2);
+            viePlayer1.setHeight(lifeP1*10);
+            viePlayer2.setHeight(lifeP2*10);
 
             viePlayer1.setLayoutY(primStage.getHeight() - viePlayer1.getHeight() + 10);
 

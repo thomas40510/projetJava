@@ -4,9 +4,10 @@ import javafx.scene.shape.Rectangle;
 
 public class Bullet extends Rectangle {
     private final int bulletType;
-    public Bullet(int type) {
+    public Bullet(int type, String color) {
         super(5, 5);
         this.bulletType = type;
+        this.setStyle("-fx-fill: " + color + ";");
         switch(bulletType){
             case 2:
                 this.setWidth(2);
