@@ -149,26 +149,15 @@ public class helloFX extends Application {
         }
 
         // Create players
-        Rectangle r = new Rectangle(50, 50);
-        Rectangle r2 = new Rectangle(50, 50);
 
-        try { // Load player image
-            File playerImg = new File("src/main/resources/player.png");
-            Image vaisseau = new Image(playerImg.toURI().toString());
-
-            r.setFill(new ImagePattern(vaisseau, 0, 0, 1, 1, true));
-
-            r2.setFill(new ImagePattern(vaisseau, 0, 0, 1, 1, true));
-
-            r2.setStyle("-fx-rotate: 180"); // r2 is facing upside down
-        } catch (Exception e){
-            Log.e("images", "Error on setting player Image", e);
-        }
         //créé un panneau
         Pane p = new Pane();
+
+        Player r = new Player(50, 50, p);
+        Player r2 = new Player(50, 50, p);
+
+
         //ajoute les rectangles au panneau
-        p.getChildren().add(r);
-        p.getChildren().add(r2);
         p.getChildren().addAll(enemies);
 
         //vie et score du vaisseau 2 en haut à gauche
@@ -202,6 +191,7 @@ public class helloFX extends Application {
         //place r2 au centre de la scène en haut
         r2.setX(s.getWidth() / 2 - r2.getWidth() / 2);
         r2.setY(0);
+        r2.rotateProperty().set(180);
         // placement des ennemis
         place_enemies(nombre_ennemis, taille_ennemis, s);
 
@@ -210,22 +200,22 @@ public class helloFX extends Application {
             //si la touche est la flèche de droite
             if (e.getCode() == KeyCode.RIGHT) {
                 //déplace le joueur vers la droite
-                move('r', r, s);
+                r.move('r', s);
             }
             //si la touche est la flèche de gauche
             if (e.getCode() == KeyCode.LEFT) {
                 //déplace le joueur vers la gauche
-                move('l', r, s);
+                r.move('l', s);
             }
             //si la touche est la touhce q
-            if (e.getCode() == KeyCode.Q) {
+            if (e.getCode() == KeyCode.A) {
                 //déplacement vers la gauche du joueur 2
-                move('l', r2, s);
+                r2.move('l', s);
             }
             //si la touche est la touche d
             if (e.getCode() == KeyCode.D) {
                 //déplacement vers la droite du joueur 2
-                move('r', r2, s);
+                r2.move('r', s);
             }
             // Envoi d'un projectile par joueur 1
             if (e.getCode() == KeyCode.SPACE) {
@@ -401,14 +391,14 @@ public class helloFX extends Application {
      * @param r Rectangle représentant le joueur
      * @param s Scène sur laquelle le joueur est affiché
      */
-    public void move(Character dir, Rectangle r, Scene s) {
-        int dx = (dir == 'r') ? 10 : -10;
-        double newPos = r.getX() + dx;
-
-        if (newPos >= 0 && newPos <= s.getWidth() - r.getWidth()) {
-            r.setX(newPos);
-        }
-    }
+//    public void move(Character dir, Rectangle r, Scene s) {
+//        int dx = (dir == 'r') ? 10 : -10;
+//        double newPos = r.getX() + dx;
+//
+//        if (newPos >= 0 && newPos <= s.getWidth() - r.getWidth()) {
+//            r.setX(newPos);
+//        }
+//    }
 
     /**
      * Envoi de projectiles par les aliens.
