@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Classe principale du jeu DualVaders
- * @authors Margot Taillantou-Candau, Thomas Prévost
+ * @author Margot Taillantou-Candau, Thomas Prévost
  * @version 2.0
  * @see Application
  */
