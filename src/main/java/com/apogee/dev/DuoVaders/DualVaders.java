@@ -97,7 +97,6 @@ public class DualVaders extends Application {
     /**********************
      * Variables globales *
      **********************/
-    static int[] playersScore = {0, 0};
     static List<Alien> enemies;
     static List<Rectangle> flyingBullets = new ArrayList<>();
     static Rectangle viePlayer1;
@@ -106,13 +105,13 @@ public class DualVaders extends Application {
     static Text lifeTxt2;
     static Text scoreTxt1;
     static Text scoreTxt2;
-    Text timerTxt;
+    static Text timerTxt;
 
-    double timeElapsed = 0;
+    static double timeElapsed = 0;
 
     int vie_max = 10;
-    int nombre_ennemis = 25;
-    int taille_ennemis = 40;
+    static int nombre_ennemis = 25;
+    static int taille_ennemis = 40;
 
     static ArrayList<Player> players = new ArrayList<>();
 
@@ -124,7 +123,7 @@ public class DualVaders extends Application {
      * Applications may create other stages, if needed, but they will not be
      * primary stages.
      */
-    public void game(Stage primaryStage) {
+    public static void game(Stage primaryStage) {
 
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
         enemies = new ArrayList<Alien>();
@@ -155,7 +154,7 @@ public class DualVaders extends Application {
         //vie et score du vaisseau 2 en haut à gauche
         lifeTxt1 = new Text(356, 480, " Vie du vaisseau 1 : " + r.getHealth());
         p.getChildren().add(lifeTxt1);
-        scoreTxt1 = new Text(400, 465, " Score 1 : " + playersScore[0]);
+        scoreTxt1 = new Text(400, 465, " Score 1 : " + r.getScore());
         p.getChildren().add(scoreTxt1);
         //ajoute la vie (rectangle) en haut à gauche de la fenêtre proportionnelle à la taille
         viePlayer1 = new Rectangle(10, r.getHealth() * 10, Color.CHARTREUSE);
@@ -166,7 +165,7 @@ public class DualVaders extends Application {
         // vie et score du vaisseau 1 en bas à droite
         lifeTxt2 = new Text(10, 20, " Vie du vaisseau 2 : " + r2.getHealth());
         p.getChildren().add(lifeTxt2);
-        scoreTxt2 = new Text(10, 35, " Score 2 : " + playersScore[1]);
+        scoreTxt2 = new Text(10, 35, " Score 2 : " + r2.getScore());
         p.getChildren().add(scoreTxt2);
         viePlayer2 = new Rectangle(10, r2.getHealth() * 10, Color.CHARTREUSE);
         p.getChildren().add(viePlayer2);
@@ -213,10 +212,8 @@ public class DualVaders extends Application {
 
     }
 
-    public void checkWin(Player r, Player r2){
+    public static void checkWin(Player r, Player r2){
         String msg = "";
-        Log.d("Vie du vaisseau 1 : " + r.getHealth());
-        Log.d("Vie du vaisseau 2 : " + r2.getHealth());
         if(r.getHealth() <= 0){
             Log.i("Over. Player 1 died");
             msg = "Player 1 died. Player 2 wins!";
@@ -238,7 +235,7 @@ public class DualVaders extends Application {
      *                     Applications may create other stages, if needed, but they will not be primary stages.
      * @param msg Message à afficher aux joueurs (raison du game over)
      */
-    public void gameOver(Stage primaryStage, String msg) {
+    public static void gameOver(Stage primaryStage, String msg) {
         //crée un panneau
         Pane p = new Pane();
         //crée une scène
@@ -302,7 +299,7 @@ public class DualVaders extends Application {
     /**
      * Permet au timer de s'incrémenter toutes les 10 millisecondes
      */
-    public void timer() {
+    public static void timer() {
         // Timer
         Timeline timeline = new Timeline(new KeyFrame(Duration.millis(10), ev -> {
             timeElapsed += 0.01;
@@ -323,7 +320,7 @@ public class DualVaders extends Application {
      * @param taille_ennemis Taille des aliens
      * @param s Scène sur laquelle les aliens sont affichés
      */
-    public void alienMove(int taille_ennemis, Scene s){
+    public static void alienMove(int taille_ennemis, Scene s){
         int nb_enemies = enemies.size();
         //déplacement des ennemis
         //tableau des directions des aliens initié à 1 (droite)
@@ -399,7 +396,7 @@ public class DualVaders extends Application {
      * @param r2 Rectangle représentant le joueur 2
      * @param s Scène sur laquelle les projectiles sont affichés
      */
-    public void alienShoot(Pane p, Rectangle r, Rectangle r2, Scene s){
+    public static void alienShoot(Pane p, Rectangle r, Rectangle r2, Scene s){
         Random rdm = new Random();
         List<Rectangle> players = new ArrayList<Rectangle>(); // liste des joueurs
         players.add(r);
@@ -560,6 +557,8 @@ public class DualVaders extends Application {
         Platform.runLater(() -> {
             int lifeP1 = players.get(0).getHealth();
             int lifeP2 = players.get(1).getHealth();
+            int scoreP1 = players.get(0).getScore();
+            int scoreP2 = players.get(1).getScore();
             lifeTxt1.setText(" Vie du vaisseau 1 : " + lifeP1);
             lifeTxt2.setText(" Vie du vaisseau 2 : " + lifeP2);
             viePlayer1.setHeight(lifeP1*10);
@@ -567,8 +566,8 @@ public class DualVaders extends Application {
 
             viePlayer1.setLayoutY(primStage.getHeight() - viePlayer1.getHeight() + 10);
 
-            scoreTxt1.setText(" Score 1 : " + playersScore[0]);
-            scoreTxt2.setText(" Score 2 : " + playersScore[1]);
+            scoreTxt1.setText(" Score 1 : " + scoreP1);
+            scoreTxt2.setText(" Score 2 : " + scoreP2);
         });
     }
 
@@ -579,7 +578,7 @@ public class DualVaders extends Application {
      * @param taille_enemies Taille des ennemis
      * @param s Scène sur laquelle les ennemis sont affichés
      */
-    private void place_enemies(int nombre_enemies, int taille_enemies, Scene s){
+    private static void place_enemies(int nombre_enemies, int taille_enemies, Scene s){
         int nb_cols = 9;
         int nb_rows = nombre_enemies/nb_cols;
         int x_offset = (int) ((s.getWidth() - nb_cols*taille_enemies)/2);

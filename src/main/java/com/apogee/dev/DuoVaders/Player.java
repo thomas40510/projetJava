@@ -54,7 +54,7 @@ public class Player extends Rectangle implements Ship {
             }
             for (Alien target : targets) {
                 if (bullet.getBoundsInParent().intersects(target.getBoundsInParent())) {
-                    target.die();
+                    target.handleDamage();
                     this.score++;
                     DualVaders.flyingBullets.remove(bullet);
                     this.pane.getChildren().remove(bullet);
@@ -68,12 +68,16 @@ public class Player extends Rectangle implements Ship {
 
         timeline.getKeyFrames().add(kf);
         timeline.play();
-
     }
 
     @Override
-    public void die() {
+    public void handleDamage() {
+        this.life--;
+        DualVaders.updateCounters();
+    }
 
+    public int getScore() {
+        return this.score;
     }
 
     @Override
