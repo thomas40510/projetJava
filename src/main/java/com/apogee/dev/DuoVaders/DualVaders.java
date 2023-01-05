@@ -194,7 +194,6 @@ public class DualVaders extends Application {
                     player.shoot();
                 }
             }
-            checkEndGame();
         });
 
 
@@ -215,6 +214,7 @@ public class DualVaders extends Application {
      * Vérification de la fin du jeu (gagnant ou perdant)
      */
     public static void checkEndGame(){
+        Log.d("Checking end game. Enemies left : " + enemies.size());
         String msg = "";
         Player r = players.get(0);
         Player r2 = players.get(1);
@@ -372,19 +372,24 @@ public class DualVaders extends Application {
                 if (enemies.size() == 0 || players.get(0).getLife() == 0 || players.get(1).getLife() == 0){
                     timeline.stop();
                 }
-                int nombre_ennemis = enemies.size();
-                int nb_aliens_shooting = rdm.nextInt(nombre_ennemis/2);
-                List<Integer> aliens_shooting = new ArrayList<Integer>();
-                for (int i = 0; i < nb_aliens_shooting; i++){
-                    int alien_nbr;
-                    do {
-                        alien_nbr = rdm.nextInt(nombre_ennemis);
-                    } while (aliens_shooting.contains(alien_nbr));
-                    aliens_shooting.add(alien_nbr);
-                }
+                try {
+                    int nombre_ennemis = enemies.size();
+                    int nb_aliens_shooting = rdm.nextInt(nombre_ennemis / 2);
+                    List<Integer> aliens_shooting = new ArrayList<Integer>();
+                    for (int i = 0; i < nb_aliens_shooting; i++) {
+                        int alien_nbr;
+                        do {
+                            alien_nbr = rdm.nextInt(nombre_ennemis);
+                        } while (aliens_shooting.contains(alien_nbr));
+                        aliens_shooting.add(alien_nbr);
+                    }
 
-                for (int i = 0; i < nb_aliens_shooting; i++){
-                    enemies.get(i).shoot();
+                    for (int i = 0; i < nb_aliens_shooting; i++) {
+                        enemies.get(i).shoot();
+                    }
+                } catch (Exception ex) {
+                    Log.e("Aliens", "Error while shooting", ex);
+                    timeline.stop();
                 }
             });
             timeline.getKeyFrames().add(kf);

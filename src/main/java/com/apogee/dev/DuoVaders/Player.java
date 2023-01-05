@@ -72,7 +72,7 @@ public class Player extends Rectangle implements Ship {
             }
             // collision with other bullets
             for (Bullet otherBullet : DualVaders.flyingBullets) {
-                if (bullet.getBoundsInParent().intersects(otherBullet.getBoundsInParent())) {
+                if (bullet.getBoundsInParent().intersects(otherBullet.getBoundsInParent()) && otherBullet != bullet) {
                     DualVaders.flyingBullets.remove(bullet);
                     this.pane.getChildren().remove(bullet);
                     DualVaders.flyingBullets.remove(otherBullet);
@@ -94,6 +94,7 @@ public class Player extends Rectangle implements Ship {
     public void handleDamage() {
         this.life--;
         DualVaders.updateCounters();
+        DualVaders.checkEndGame();
     }
 
     public int getScore() {

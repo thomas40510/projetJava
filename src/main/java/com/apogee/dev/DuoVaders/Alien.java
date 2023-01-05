@@ -83,6 +83,7 @@ public class Alien extends Rectangle implements Ship {
     public void handleDamage() {
         this.pane.getChildren().remove(this);
         DualVaders.enemies.remove(this);
+        DualVaders.checkEndGame();
     }
 
     /**
