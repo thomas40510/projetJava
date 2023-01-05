@@ -81,7 +81,7 @@ public class Player extends Rectangle implements Ship {
     }
 
     @Override
-    public int getHealth() {
+    public int getLife() {
         return this.life;
     }
 

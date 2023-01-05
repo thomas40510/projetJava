@@ -1,5 +1,7 @@
 package com.apogee.dev.DuoVaders;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
@@ -7,7 +9,9 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
 import java.io.File;
+import java.security.Key;
 import java.util.List;
+import java.util.Random;
 
 public class Alien extends Rectangle implements Ship {
     private Pane pane;
@@ -17,10 +21,37 @@ public class Alien extends Rectangle implements Ship {
 
     }
 
-    @Override
     public void shoot() {
-
+        Random rand = new Random();
+        int direction = rand.nextInt(2);
+        Bullet bullet = new Bullet(1, "red");
+        DualVaders.flyingBullets.add(bullet);
+        this.pane.getChildren().add(bullet);
+        bullet.setX(this.getX() + this.getWidth() / 2 - bullet.getWidth() / 2);
+        bullet.setY(this.getY() + this.getHeight());
+        Timeline timeline = new Timeline();
+        KeyFrame kf = new KeyFrame(javafx.util.Duration.seconds(.1), e -> {
+            if (bullet.getY() < 0 || bullet.getY() > this.scene.getHeight()) {
+                timeline.stop();
+                DualVaders.flyingBullets.remove(bullet);
+                this.pane.getChildren().remove(bullet);
+            }
+            for (Player target : DualVaders.players) {
+                if (bullet.getBoundsInParent().intersects(target.getBoundsInParent())) {
+                    timeline.stop();
+                    target.handleDamage();
+                    DualVaders.flyingBullets.remove(bullet);
+                    this.pane.getChildren().remove(bullet);
+                }
+            }
+            int dx = (direction == 0) ? 10 : -10;
+            bullet.setY(bullet.getY() + dx);
+        });
+        timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.getKeyFrames().add(kf);
+        timeline.play();
     }
+
 
     @Override
     public void handleDamage() {
@@ -29,7 +60,7 @@ public class Alien extends Rectangle implements Ship {
     }
 
     @Override
-    public int getHealth() {
+    public int getLife() {
         return 0;
     }
 

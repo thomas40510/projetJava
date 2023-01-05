@@ -8,5 +8,5 @@ public interface Ship {
 
     public void shoot();
     public void handleDamage();
-    public int getHealth();
+    public int getLife();
 }

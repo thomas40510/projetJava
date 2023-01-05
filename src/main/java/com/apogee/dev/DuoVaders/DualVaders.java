@@ -152,22 +152,22 @@ public class DualVaders extends Application {
         p.getChildren().addAll(enemies);
 
         //vie et score du vaisseau 2 en haut à gauche
-        lifeTxt1 = new Text(356, 480, " Vie du vaisseau 1 : " + r.getHealth());
+        lifeTxt1 = new Text(356, 480, " Vie du vaisseau 1 : " + r.getLife());
         p.getChildren().add(lifeTxt1);
         scoreTxt1 = new Text(400, 465, " Score 1 : " + r.getScore());
         p.getChildren().add(scoreTxt1);
         //ajoute la vie (rectangle) en haut à gauche de la fenêtre proportionnelle à la taille
-        viePlayer1 = new Rectangle(10, r.getHealth() * 10, Color.CHARTREUSE);
+        viePlayer1 = new Rectangle(10, r.getLife() * 10, Color.CHARTREUSE);
         viePlayer1.setLayoutX(500 - viePlayer1.getWidth());
         viePlayer1.setLayoutY(500 - viePlayer1.getHeight());
         p.getChildren().add(viePlayer1);
 
         // vie et score du vaisseau 1 en bas à droite
-        lifeTxt2 = new Text(10, 20, " Vie du vaisseau 2 : " + r2.getHealth());
+        lifeTxt2 = new Text(10, 20, " Vie du vaisseau 2 : " + r2.getLife());
         p.getChildren().add(lifeTxt2);
         scoreTxt2 = new Text(10, 35, " Score 2 : " + r2.getScore());
         p.getChildren().add(scoreTxt2);
-        viePlayer2 = new Rectangle(10, r2.getHealth() * 10, Color.CHARTREUSE);
+        viePlayer2 = new Rectangle(10, r2.getLife() * 10, Color.CHARTREUSE);
         p.getChildren().add(viePlayer2);
 
         // Timer top right
@@ -214,11 +214,11 @@ public class DualVaders extends Application {
 
     public static void checkWin(Player r, Player r2){
         String msg = "";
-        if(r.getHealth() <= 0){
+        if(r.getLife() <= 0){
             Log.i("Over. Player 1 died");
             msg = "Player 1 died. Player 2 wins!";
         }
-        if (r2.getHealth() <= 0){
+        if (r2.getLife() <= 0){
             Log.i("Over. Player 2 died");
             msg = "Player 2 died. Player 1 wins!";
         }
@@ -398,32 +398,54 @@ public class DualVaders extends Application {
      */
     public static void alienShoot(Pane p, Rectangle r, Rectangle r2, Scene s){
         Random rdm = new Random();
-        List<Rectangle> players = new ArrayList<Rectangle>(); // liste des joueurs
-        players.add(r);
-        players.add(r2);
-        // every given time, random aliens shoot
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1.4), e -> {
-            int nombre_ennemis = enemies.size();
-            int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/2); // au maximum la moitié des aliens tirent
-
-            // on prend nb_aliens_shoot ennemis au hasard dans la liste des aliens
-            List<Integer> randoms = new ArrayList<Integer>();
-            for (int i = 0; i < nb_aliens_shoot; i++){
-                int random = rdm.nextInt(nombre_ennemis);
-                while (randoms.contains(random)){
-                    random = rdm.nextInt(nombre_ennemis);
+        Platform.runLater(() -> {
+            Timeline timeline = new Timeline();
+            KeyFrame kf = new KeyFrame(Duration.seconds(3), e -> {
+                if (enemies.size() == 0 || players.get(0).getLife() == 0 || players.get(1).getLife() == 0){
+                    timeline.stop();
                 }
-                randoms.add(random);
-            }
+                int nombre_ennemis = enemies.size();
+                int nb_aliens_shooting = rdm.nextInt(nombre_ennemis/2);
+                List<Integer> aliens_shooting = new ArrayList<Integer>();
+                for (int i = 0; i < nb_aliens_shooting; i++){
+                    int alien_nbr;
+                    do {
+                        alien_nbr = rdm.nextInt(nombre_ennemis);
+                    } while (aliens_shooting.contains(alien_nbr));
+                    aliens_shooting.add(alien_nbr);
+                }
 
-            // on les fait tirer
-            for (int i = 0; i < nb_aliens_shoot; i++){
-                //shoot(3, p, enemies.get(randoms.get(i)), players);
-                Log.d("Alien shoot");
-            }
-        }));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-        timeline.play();
+                for (int i = 0; i < nb_aliens_shooting; i++){
+                    enemies.get(i).shoot();
+                }
+            });
+            timeline.getKeyFrames().add(kf);
+            timeline.setCycleCount(Timeline.INDEFINITE);
+            timeline.play();
+        });
+        // every given time, random aliens shoot
+//        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1.4), e -> {
+//            int nombre_ennemis = enemies.size();
+//            int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/2); // au maximum la moitié des aliens tirent
+//
+//            // on prend nb_aliens_shoot ennemis au hasard dans la liste des aliens
+//            List<Integer> randoms = new ArrayList<Integer>();
+//            for (int i = 0; i < nb_aliens_shoot; i++){
+//                int random = rdm.nextInt(nombre_ennemis);
+//                while (randoms.contains(random)){
+//                    random = rdm.nextInt(nombre_ennemis);
+//                }
+//                randoms.add(random);
+//            }
+//
+//            // on les fait tirer
+//            for (int i = 0; i < nb_aliens_shoot; i++){
+//                //shoot(3, p, enemies.get(randoms.get(i)), players);
+//                Log.d("Alien shoot");
+//            }
+//        }));
+//        timeline.setCycleCount(Timeline.INDEFINITE);
+//        timeline.play();
     }
 
 
@@ -435,128 +457,14 @@ public class DualVaders extends Application {
      * @param targets Liste des rectangles représentant les entités qui peuvent être touchées par le tir (joueurs ou aliens)
      */
 //    public void shoot(int direction, Pane p, Rectangle shooter, List <Rectangle> targets) {
-//        int dx;
-//        int shootingShip = -1;
-//        switch (direction) {
-//            case 1: // tir du joueur 1
-//                dx = -10;
-//                shootingShip = 0;
-//                break;
-//            case 2: // tir du joueur 2
-//                dx = 10;
-//                shootingShip = 1;
-//                break;
-//            case 3: // tir d'un alien
-//                Random rdm = new Random();
-//                int n = rdm.nextInt(2);
-//                dx = (n == 0) ? -10 : 10;
-//                break;
-//            default:
-//                dx = 0;
-//        }
-//
-//        // Création du projectile
-//        Rectangle curr = new Bullet(1);
-//        flyingBullets.add(curr);
-//        p.getChildren().add(curr);
-//        curr.setX(shooter.getX() + shooter.getWidth() / 2 - curr.getWidth() / 2);
-//        curr.setY(shooter.getY() - curr.getHeight());
-//
-//        final Boolean[] running = {true};
-//
-//        //déplace le rectangle de 10 pixels vers le haut automatiquement toutes les 0.5s
-//        int finalDx = dx;
-//        Timeline timeline = new Timeline();
-//        int finalShootingShip = shootingShip;
-//        KeyFrame kf = new KeyFrame(Duration.millis(50),
-//                event -> {
-//                    //ONLY the first enemy crossing the bullet is killed
-//                    //any other enemy crossing the bullet is not killed
-//                    if(direction != 3){
-//                        for (int i = 0; i < targets.size(); i++) {
-//                            Rectangle target = targets.get(i);
-//                            if (curr.getBoundsInParent().intersects(target.getBoundsInParent())) {
-//                                p.getChildren().remove(target);
-//                                curr.setX(-1); // ensure no more hits
-//                                p.getChildren().remove(curr);
-//                                targets.remove(target);
-//                                flyingBullets.remove(curr);
-//                                playersScore[finalShootingShip]++;
-//                                updateCounters();
-//                                running[0] = false;
-//                                break;
-//                            }
-//                        }
-//                    } else {
-//                        // shooter is an alien
-//                        // if bullet hits a player, it looses life
-//                        for (int i = 0; i < targets.size(); i++){
-//                            Rectangle target = targets.get(i);
-//                            if (curr.getBoundsInParent().intersects(target.getBoundsInParent())){
-//                                playersLife[i]--;
-//                                curr.setX(-1);
-//                                p.getChildren().remove(curr);
-//                                flyingBullets.remove(curr);
-//                                Log.i("Vie du vaisseau "+(i+1)+" : "+playersLife[i]);
-//                                updateCounters();
-//                                running[0] = false;
-//                                break;
-//                            }
-//                        }
-//                    }
-//                    // handle hit of another bullet
-//                    for (Rectangle b : flyingBullets){
-//                        if (curr.getBoundsInParent().intersects(b.getBoundsInParent()) && b != curr){
-//                            Log.d("Bullet hit another bullet at position "+curr.getX()+","+curr.getY());
-//                            curr.setX(-1);
-//                            b.setX(-1);
-//                            p.getChildren().remove(curr);
-//                            p.getChildren().remove(b);
-//                            flyingBullets.remove(b);
-//                            flyingBullets.remove(curr);
-//                            running[0] = false;
-//                            timeline.stop();
-//                            return;
-//                        }
-//                    }
-//                    curr.setY(curr.getY() + finalDx);
-//
-//                    if (enemies.isEmpty()){ // if all aliens are dead
-//                        Log.d("No enemies left");
-//                        curr.setX(-1);
-//                        running[0] = false;
-//                        gameOver(primStage, "No enemies left. You win!");
-//                        timeline.stop();
-//                    }
-//                    if (playersLife[0] <= 0 || playersLife[1] <= 0){ // if a player is dead
-//                        String deadPlayer = (playersLife[0] <= 0) ? "Player 1" : "Player 2";
-//                        String winner = (playersLife[0] <= 0) ? "Player 2" : "Player 1";
-//                        Log.d(deadPlayer+" died.");
-//                        curr.setX(-1);
-//                        running[0] = false;
-//                        gameOver(primStage, "No more lives left. "+deadPlayer+" is dead. "+winner+" wins!");
-//                        timeline.stop();
-//                    }
-//                    if (curr.getY() < 0 || curr.getY() > p.getHeight()) {
-//                        curr.setX(-1);
-//                        running[0] = false;
-//                        p.getChildren().remove(curr);
-//                        flyingBullets.remove(curr);
-//                        timeline.stop();
-//                    }
-//                });
-//        timeline.getKeyFrames().add(kf);
-//        timeline.setCycleCount(Timeline.INDEFINITE);
-//        timeline.play();
-//    }
 
     /**
      * Mise à jour des compteurs de score et de vie en cours de partie.
      */
     public static void updateCounters(){
         Platform.runLater(() -> {
-            int lifeP1 = players.get(0).getHealth();
-            int lifeP2 = players.get(1).getHealth();
+            int lifeP1 = players.get(0).getLife();
+            int lifeP2 = players.get(1).getLife();
             int scoreP1 = players.get(0).getScore();
             int scoreP2 = players.get(1).getScore();
             lifeTxt1.setText(" Vie du vaisseau 1 : " + lifeP1);
