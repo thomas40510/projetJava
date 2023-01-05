@@ -1,10 +1,3 @@
-/**
- * helloFX.java
- * Fichier principal de l'application
- * @authors Margot Taillantou-Candau, Thomas Prévost
- * @version 1.8
- */
-
 package com.apogee.dev.DuoVaders;
 
 import com.jfoenix.controls.*;
@@ -27,12 +20,18 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DualVaders extends Application {
+/**
+ * Classe principale du jeu DualVaders
+ * @authors Margot Taillantou-Candau, Thomas Prévost
+ * @version 2.0
+ * @see Application
+ */
 
+public class DualVaders extends Application {
     static Stage primStage;
 
     /**
-     * Méthode principale de l'application
+     * Menu principal de l'application
      * @param primaryStage the primary stage for this application, onto which
      * the application scene can be set.
      * Applications may create other stages, if needed, but they will not be
@@ -99,7 +98,7 @@ public class DualVaders extends Application {
      * Variables globales *
      **********************/
     static List<Alien> enemies;
-    static List<Rectangle> flyingBullets = new ArrayList<>();
+    static List<Bullet> flyingBullets = new ArrayList<>();
     static Rectangle viePlayer1;
     static Rectangle viePlayer2;
     static Text lifeTxt1;
@@ -128,10 +127,7 @@ public class DualVaders extends Application {
 
         // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
         enemies = new ArrayList<Alien>();
-
-
-        // Create players
-
+        
         //créé un panneau
         Pane p = new Pane();
         //créé une scène de 500x500 pixels
@@ -317,14 +313,10 @@ public class DualVaders extends Application {
      * L'armada alien verticale part de la gauche de l'écran et se déplace horizontalement de gauche à droite.
      * Lorsqu'elle atteint le côté droit de l'écran, elle monte ou descend d'une rangée et se déplace de droite à gauche.
      * Lorsqu'elle atteint le côté gauche de l'écran, elle monte ou descend d'une rangée et se déplace à nouveau vers la droite.
-     * Le déplacement vertical est aléatoire pour chaque alien.
+     * Le déplacement vertical est aléatoire pour l'ensemble de la flotte.
+     * @param s la scène du jeu
      */
     public static void alienMove(Scene s){
-        int nb_enemies = enemies.size();
-        //déplacement des ennemis
-        //tableau des directions des aliens initié à 1 (droite)
-        AtomicInteger bottomCount = new AtomicInteger();
-
         Timeline timeline = new Timeline();
         AtomicInteger changeCount = new AtomicInteger();
         AtomicBoolean changedDir = new AtomicBoolean(false);
@@ -333,7 +325,7 @@ public class DualVaders extends Application {
             Random rdm = new Random();
             if (!changedDir.get() && (enemies.stream().anyMatch(enemy -> enemy.getX() >= s.getWidth() - enemy.getWidth()) ||
                     enemies.stream().anyMatch(enemy -> enemy.getX() <= enemy.getWidth()))) {
-                //change direction of all aliens
+                /* Aliens are at the edge of the screen, go up or down */
                 int r = rdm.nextInt(2);
                 for (Alien alien : enemies){
                     char dir = (r == 0) ? 'u' : 'd';
@@ -341,7 +333,7 @@ public class DualVaders extends Application {
                 }
                 changeCount.getAndIncrement();
                 changedDir.set(true);
-            } else {
+            } else { // move horizontally depending on the current position
                 char dir;
                 if (changeCount.get() % 2 == 0) {
                     dir = 'l';
@@ -358,55 +350,8 @@ public class DualVaders extends Application {
         timeline.getKeyFrames().add(kf);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
-
-//            for (int i = 0; i < nombre_ennemis; i++) {
-//                //si l'ennemi est à gauche de la fenêtre
-//                if (enemies.get(i).getX() <= 0) {
-//                    //on descend / monte et on change la direction
-//                    int random = rdm.nextInt(2);
-//                    int dY = (random == 0) ? -40 : 40;
-//
-//                    bottomCount.getAndIncrement();
-//                    enemies.get(i).setX(enemies.get(i).getX() + 40);
-//                    enemies.get(i).setY(enemies.get(i).getY() + dY);
-//                    directions[i] = 1;
-//                }
-//                //si l'ennemi est à droite de la fenêtre
-//                if (enemies.get(i).getX() >= s.getWidth() - taille_ennemis) {
-//                    //déplace l'ennemi vers la gauche descend/monte d'une rangée et part vers la droite
-//                    // one chance on two to go down
-//                    int random = rdm.nextInt(2);
-//                    int dY = (random == 0) ? -40 : 40;
-//                    enemies.get(i).setX(enemies.get(i).getX() - 40);
-//                    enemies.get(i).setY(enemies.get(i).getY() + dY);
-//                    bottomCount.getAndIncrement();
-//                    directions[i] = -1;
-//                }
-//                //déplace l'ennemi
-//                enemies.get(i).setX(enemies.get(i).getX() + 10 * directions[i]);
-//                if (bottomCount.get() == 2*nb_enemies){
-//                    // on arrive à deux déplacements verticaux
-//                    timeline.stop();
-//                    Log.i("Stopping motion");
-//                }
-//            }
     }
 
-    /**
-     * Déplacement des joueurs.
-     * La seule condition est que les joueurs ne puissent pas sortir de l'écran.
-     * @param dir Direction du déplacement ('r' pour droite, 'l' pour gauche)
-     * @param r Rectangle représentant le joueur
-     * @param s Scène sur laquelle le joueur est affiché
-     */
-//    public void move(Character dir, Rectangle r, Scene s) {
-//        int dx = (dir == 'r') ? 10 : -10;
-//        double newPos = r.getX() + dx;
-//
-//        if (newPos >= 0 && newPos <= s.getWidth() - r.getWidth()) {
-//            r.setX(newPos);
-//        }
-//    }
 
     /**
      * Envoi de projectiles par les aliens.
@@ -439,40 +384,7 @@ public class DualVaders extends Application {
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
         });
-        // every given time, random aliens shoot
-//        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1.4), e -> {
-//            int nombre_ennemis = enemies.size();
-//            int nb_aliens_shoot = rdm.nextInt(nombre_ennemis/2); // au maximum la moitié des aliens tirent
-//
-//            // on prend nb_aliens_shoot ennemis au hasard dans la liste des aliens
-//            List<Integer> randoms = new ArrayList<Integer>();
-//            for (int i = 0; i < nb_aliens_shoot; i++){
-//                int random = rdm.nextInt(nombre_ennemis);
-//                while (randoms.contains(random)){
-//                    random = rdm.nextInt(nombre_ennemis);
-//                }
-//                randoms.add(random);
-//            }
-//
-//            // on les fait tirer
-//            for (int i = 0; i < nb_aliens_shoot; i++){
-//                //shoot(3, p, enemies.get(randoms.get(i)), players);
-//                Log.d("Alien shoot");
-//            }
-//        }));
-//        timeline.setCycleCount(Timeline.INDEFINITE);
-//        timeline.play();
     }
-
-
-    /**
-     * Action de tir. Contient également les mécaniques de collision et de fin de partie.
-     * @param direction Direction du tir (sert d'option pour savoir qui a tiré)
-     * @param p Pane sur laquelle le tir est affiché
-     * @param shooter Rectangle représentant l'entité qui tire (joueur ou alien)
-     * @param targets Liste des rectangles représentant les entités qui peuvent être touchées par le tir (joueurs ou aliens)
-     */
-//    public void shoot(int direction, Pane p, Rectangle shooter, List <Rectangle> targets) {
 
     /**
      * Mise à jour des compteurs de score et de vie en cours de partie.

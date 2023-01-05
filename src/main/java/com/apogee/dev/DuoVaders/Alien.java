@@ -13,6 +13,12 @@ import java.security.Key;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Classe représentant un vaisseau alien.
+ * @version 1.0
+ * @see Ship
+ * @see Rectangle
+ */
 public class Alien extends Rectangle implements Ship {
     private Pane pane;
     private Scene scene;
@@ -79,10 +85,6 @@ public class Alien extends Rectangle implements Ship {
         DualVaders.enemies.remove(this);
     }
 
-    @Override
-    public int getLife() {
-        return 0;
-    }
 
     public Alien(double width, double height, Pane p, Scene s) {
         this.setWidth(width);

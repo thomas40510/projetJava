@@ -2,8 +2,19 @@ package com.apogee.dev.DuoVaders;
 
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Classe représentant un projectile
+ * @version 1.0
+ * @see Rectangle
+ */
 public class Bullet extends Rectangle {
     private final int bulletType;
+
+    /**
+     * Constructeur de la classe Bullet
+     * @param type Type de projectile. Plusieurs types pourront être implémentés.
+     * @param color Couleur du projectile
+     */
     public Bullet(int type, String color) {
         super(5, 5);
         this.bulletType = type;

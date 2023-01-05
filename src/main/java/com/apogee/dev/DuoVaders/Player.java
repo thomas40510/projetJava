@@ -12,6 +12,13 @@ import javafx.scene.shape.Rectangle;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Classe représentant un joueur
+ * @version 1.0
+ * @see Ship
+ * @see Rectangle
+ */
+
 public class Player extends Rectangle implements Ship {
     private int life;
     private int score;
@@ -34,7 +41,7 @@ public class Player extends Rectangle implements Ship {
 
     @Override
     public void shoot() {
-        Rectangle bullet = new Bullet(this.canonType, "blue");
+        Bullet bullet = new Bullet(this.canonType, "blue");
         DualVaders.flyingBullets.add(bullet);
 
         this.pane.getChildren().add(bullet);
@@ -63,6 +70,19 @@ public class Player extends Rectangle implements Ship {
                     break;
                 }
             }
+            // collision with other bullets
+            for (Bullet otherBullet : DualVaders.flyingBullets) {
+                if (bullet.getBoundsInParent().intersects(otherBullet.getBoundsInParent())) {
+                    DualVaders.flyingBullets.remove(bullet);
+                    this.pane.getChildren().remove(bullet);
+                    DualVaders.flyingBullets.remove(otherBullet);
+                    this.pane.getChildren().remove(otherBullet);
+                    timeline.stop();
+                    break;
+                }
+            }
+
+
             bullet.setY(bullet.getY() + this.shootDirection);
         });
 
@@ -80,11 +100,19 @@ public class Player extends Rectangle implements Ship {
         return this.score;
     }
 
-    @Override
+    /**
+     * Accès à la vie du joueur.
+     * @return La vie du joueur.
+     */
     public int getLife() {
         return this.life;
     }
 
+    /**
+     * Obtention d'une touche de déplacement du joueur.
+     * @param key Instruction ('l' pour gauche, 'r' pour droite, 's' pour tirer)
+     * @return La touche associée à l'instruction.
+     */
     public KeyCode getKeyCode(char key) {
         switch (key) {
             case 'l':
@@ -98,6 +126,11 @@ public class Player extends Rectangle implements Ship {
         }
     }
 
+    /**
+     * Direction de tir du joueur en fonction de sa touche d'instruction de tir.
+     * Si la touche est 'E', le joueur est en haut de l'écran et tire vers le bas.
+     * Si la touche est 'SPACE', le joueur est en bas de l'écran et tire vers le haut.
+     */
     private void setShootDirection(){
         switch (this.getKeyCode('s')){
             case E:
@@ -111,6 +144,16 @@ public class Player extends Rectangle implements Ship {
         }
     }
 
+    /**
+     * Constructeur du joueur.
+     * @param width Largeur du joueur.
+     * @param height Hauteur du joueur.
+     * @param p Pane dans lequel le joueur est affiché.
+     * @param s Scene dans laquelle le joueur est affiché.
+     * @param left Touche de déplacement gauche.
+     * @param right Touche de déplacement droite.
+     * @param shoot Touche de tir.
+     */
     public Player(double width, double height, Pane p, Scene s, KeyCode left, KeyCode right, KeyCode shoot) {
         super(width, height);
         this.height = height;
