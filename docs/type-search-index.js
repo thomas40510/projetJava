@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.apogee.dev.DuoVaders","l":"helloFX"},{"p":"com.apogee.dev.DuoVaders","l":"Log"}];updateSearchResults();
+typeSearchIndex = [{"p":"com.apogee.dev.DuoVaders","l":"Alien"},{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.apogee.dev.DuoVaders","l":"Bullet"},{"p":"com.apogee.dev.DuoVaders","l":"DualVaders"},{"p":"com.apogee.dev.DuoVaders","l":"Log"},{"p":"com.apogee.dev.DuoVaders","l":"Player"},{"p":"com.apogee.dev.DuoVaders","l":"Ship"}];updateSearchResults();

@@ -85,7 +85,13 @@ public class Alien extends Rectangle implements Ship {
         DualVaders.enemies.remove(this);
     }
 
-
+    /**
+     * Constructeur de la classe Alien
+     * @param width Largeur de l'Alien
+     * @param height Hauteur de l'Alien
+     * @param p Pane dans lequel l'Alien est affiché
+     * @param s Scene dans laquelle l'Alien est affiché
+     */
     public Alien(double width, double height, Pane p, Scene s) {
         this.setWidth(width);
         this.setHeight(height);

@@ -1,7 +1,7 @@
 package com.apogee.dev.DuoVaders;
 
 /** Utility class for logging info on console.
- * Implements the Android-like Log.p command.
+ * Implements the Android-like Log command.
  * @author PRV
  * @version 1.0
  * @see <a href="https://developer.android.com/reference/android/util/Log">Android Log</a>
@@ -11,7 +11,11 @@ public class Log {
     private static final String RED = "\u001B[31m";
     private static final String GREEN = "\u001B[32m";
     private static final String RESET = "\u001B[0m";
-    public static void main(String[] args) {
+
+    /**
+     * Constructor of the Log class. This class is not meant to be instantiated.
+     */
+    public static void main() {
         return;
     }
     /** Log an error message

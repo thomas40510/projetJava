@@ -8,18 +8,16 @@ import javafx.scene.shape.Rectangle;
  * @see Rectangle
  */
 public class Bullet extends Rectangle {
-    private final int bulletType;
 
     /**
      * Constructeur de la classe Bullet
-     * @param type Type de projectile. Plusieurs types pourront être implémentés.
+     * @param type Type de projectile. Plusieurs types ont été implémentés, un seul est utilisé pour le moment.
      * @param color Couleur du projectile
      */
     public Bullet(int type, String color) {
         super(5, 5);
-        this.bulletType = type;
         this.setStyle("-fx-fill: " + color + ";");
-        switch(bulletType){
+        switch(type){
             case 2:
                 this.setWidth(2);
                 this.setHeight(2);

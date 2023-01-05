@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Classe principale du jeu DualVaders
- * @authors Margot Taillantou-Candau, Thomas Prévost
+ * @author Margot Taillantou-Candau, Thomas Prévost
  * @version 2.0
  * @see Application
  */
@@ -125,20 +125,22 @@ public class DualVaders extends Application {
      */
     public static void game(Stage primaryStage) {
 
-        // créé la liste des carrés de 10*10 pixels de couleur rouge (enemy)
+        // initialisation de la liste des ennemis
         enemies = new ArrayList<Alien>();
-        
+
         //créé un panneau
         Pane p = new Pane();
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
 
 
+        // Joueurs
         Player r = new Player(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
         Player r2 = new Player(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
         players.add(r);
         players.add(r2);
 
+        // Aliens
         for (int i = 0; i < nombre_ennemis; i++) {
             Alien a = new Alien(taille_ennemis, taille_ennemis, p, s);
             enemies.add(a);
@@ -192,7 +194,7 @@ public class DualVaders extends Application {
                     player.shoot();
                 }
             }
-            checkWin(r, r2);
+            checkEndGame();
         });
 
 
@@ -209,8 +211,13 @@ public class DualVaders extends Application {
 
     }
 
-    public static void checkWin(Player r, Player r2){
+    /**
+     * Vérification de la fin du jeu (gagnant ou perdant)
+     */
+    public static void checkEndGame(){
         String msg = "";
+        Player r = players.get(0);
+        Player r2 = players.get(1);
         if(r.getLife() <= 0){
             Log.i("Over. Player 1 died");
             msg = "Player 1 died. Player 2 wins!";
@@ -408,8 +415,7 @@ public class DualVaders extends Application {
     }
 
     /**
-     * Placement initial des ennemis
-     *
+     * Placement initial des ennemis.
      * @param nombre_enemies Nombre d'ennemis à placer
      * @param taille_enemies Taille des ennemis
      * @param s Scène sur laquelle les ennemis sont affichés
@@ -427,16 +433,6 @@ public class DualVaders extends Application {
         }
         Log.d("Placed "+nombre_enemies+" enemies on "+nb_cols+" cols");
     }
-
-    /**
-     * Création d'un rectangle représentant un projectile
-     * @return Rectangle de 5x5 représentant un projectile
-     */
-//    public Rectangle bullet(){
-//        Rectangle b = new Rectangle(5, 5);
-//        b.setFill(Color.BLUE);
-//        return b;
-//    }
 
     /**
      * Lancement du jeu
