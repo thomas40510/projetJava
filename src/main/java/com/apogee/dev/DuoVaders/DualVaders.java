@@ -24,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DualVaders extends Application {
@@ -206,8 +207,8 @@ public class DualVaders extends Application {
 
         primStage = primaryStage; // save the primary stage for later use
 
-        alienMove(taille_ennemis, s); // déplacement des aliens
-        alienShoot(p, r, r2, s);  // tirs des aliens
+        alienMove(s); // déplacement des aliens
+        alienShoot();  // tirs des aliens
         timer(); // timer
 
     }
@@ -317,59 +318,78 @@ public class DualVaders extends Application {
      * Lorsqu'elle atteint le côté droit de l'écran, elle monte ou descend d'une rangée et se déplace de droite à gauche.
      * Lorsqu'elle atteint le côté gauche de l'écran, elle monte ou descend d'une rangée et se déplace à nouveau vers la droite.
      * Le déplacement vertical est aléatoire pour chaque alien.
-     * @param taille_ennemis Taille des aliens
-     * @param s Scène sur laquelle les aliens sont affichés
      */
-    public static void alienMove(int taille_ennemis, Scene s){
+    public static void alienMove(Scene s){
         int nb_enemies = enemies.size();
         //déplacement des ennemis
         //tableau des directions des aliens initié à 1 (droite)
-        int[] directions = new int[nb_enemies];
-        for (int i = 0; i < nb_enemies; i++){
-            directions[i] = 1;
-        }
-
         AtomicInteger bottomCount = new AtomicInteger();
 
         Timeline timeline = new Timeline();
-        KeyFrame kf = new KeyFrame(Duration.seconds(0.1), e -> {
-            Random rdm = new Random();
-            int nombre_ennemis = enemies.size();
-            for (int i = 0; i < nombre_ennemis; i++) {
-                //si l'ennemi est à gauche de la fenêtre
-                if (enemies.get(i).getX() <= 0) {
-                    //on descend / monte et on change la direction
-                    int random = rdm.nextInt(2);
-                    int dY = (random == 0) ? -40 : 40;
+        AtomicInteger changeCount = new AtomicInteger();
+        AtomicBoolean changedDir = new AtomicBoolean(false);
 
-                    bottomCount.getAndIncrement();
-                    enemies.get(i).setX(enemies.get(i).getX() + 40);
-                    enemies.get(i).setY(enemies.get(i).getY() + dY);
-                    directions[i] = 1;
+        KeyFrame kf = new KeyFrame(Duration.seconds(0.2), e -> {
+            Random rdm = new Random();
+            if (!changedDir.get() && (enemies.stream().anyMatch(enemy -> enemy.getX() >= s.getWidth() - enemy.getWidth()) ||
+                    enemies.stream().anyMatch(enemy -> enemy.getX() <= enemy.getWidth()))) {
+                //change direction of all aliens
+                int r = rdm.nextInt(2);
+                for (Alien alien : enemies){
+                    char dir = (r == 0) ? 'u' : 'd';
+                    alien.move(dir, s);
                 }
-                //si l'ennemi est à droite de la fenêtre
-                if (enemies.get(i).getX() >= s.getWidth() - taille_ennemis) {
-                    //déplace l'ennemi vers la gauche descend/monte d'une rangée et part vers la droite
-                    // one chance on two to go down
-                    int random = rdm.nextInt(2);
-                    int dY = (random == 0) ? -40 : 40;
-                    enemies.get(i).setX(enemies.get(i).getX() - 40);
-                    enemies.get(i).setY(enemies.get(i).getY() + dY);
-                    bottomCount.getAndIncrement();
-                    directions[i] = -1;
+                changeCount.getAndIncrement();
+                changedDir.set(true);
+            } else {
+                char dir;
+                if (changeCount.get() % 2 == 0) {
+                    dir = 'l';
+                } else {
+                    dir = 'r';
                 }
-                //déplace l'ennemi
-                enemies.get(i).setX(enemies.get(i).getX() + 10 * directions[i]);
-                if (bottomCount.get() == 2*nb_enemies){
-                    // on arrive à deux déplacements verticaux
-                    timeline.stop();
-                    Log.i("Stopping motion");
+                for (Alien alien : enemies){
+                    alien.move(dir, s);
                 }
+                changedDir.set(false);
             }
+
         });
         timeline.getKeyFrames().add(kf);
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
+
+//            for (int i = 0; i < nombre_ennemis; i++) {
+//                //si l'ennemi est à gauche de la fenêtre
+//                if (enemies.get(i).getX() <= 0) {
+//                    //on descend / monte et on change la direction
+//                    int random = rdm.nextInt(2);
+//                    int dY = (random == 0) ? -40 : 40;
+//
+//                    bottomCount.getAndIncrement();
+//                    enemies.get(i).setX(enemies.get(i).getX() + 40);
+//                    enemies.get(i).setY(enemies.get(i).getY() + dY);
+//                    directions[i] = 1;
+//                }
+//                //si l'ennemi est à droite de la fenêtre
+//                if (enemies.get(i).getX() >= s.getWidth() - taille_ennemis) {
+//                    //déplace l'ennemi vers la gauche descend/monte d'une rangée et part vers la droite
+//                    // one chance on two to go down
+//                    int random = rdm.nextInt(2);
+//                    int dY = (random == 0) ? -40 : 40;
+//                    enemies.get(i).setX(enemies.get(i).getX() - 40);
+//                    enemies.get(i).setY(enemies.get(i).getY() + dY);
+//                    bottomCount.getAndIncrement();
+//                    directions[i] = -1;
+//                }
+//                //déplace l'ennemi
+//                enemies.get(i).setX(enemies.get(i).getX() + 10 * directions[i]);
+//                if (bottomCount.get() == 2*nb_enemies){
+//                    // on arrive à deux déplacements verticaux
+//                    timeline.stop();
+//                    Log.i("Stopping motion");
+//                }
+//            }
     }
 
     /**
@@ -391,12 +411,8 @@ public class DualVaders extends Application {
     /**
      * Envoi de projectiles par les aliens.
      * Les aliens tirent aléatoirement, dans une direction aléatoire (haut ou bas).
-     * @param p Panneau sur lequel les projectiles sont affichés
-     * @param r Rectangle représentant le joueur 1
-     * @param r2 Rectangle représentant le joueur 2
-     * @param s Scène sur laquelle les projectiles sont affichés
      */
-    public static void alienShoot(Pane p, Rectangle r, Rectangle r2, Scene s){
+    public static void alienShoot(){
         Random rdm = new Random();
         Platform.runLater(() -> {
             Timeline timeline = new Timeline();

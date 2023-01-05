@@ -18,7 +18,27 @@ public class Alien extends Rectangle implements Ship {
     private Scene scene;
     @Override
     public void move(char dir, Scene s) {
-
+        int dx = 0;
+        int dy = 0;
+        switch (dir){
+            case 'r':
+                dx = 10;
+                break;
+            case 'l':
+                dx = -10;
+                break;
+            case 'd':
+                dy = 10;
+                break;
+            case 'u':
+                dy = -10;
+                break;
+            default:
+                dx = dy = 0;
+                break;
+        }
+        this.setX(this.getX() + dx);
+        this.setY(this.getY() + dy);
     }
 
     public void shoot() {
