@@ -43,10 +43,7 @@ public class DualVaders extends Application {
         //crée une scène
         Scene s = new Scene(p, 800, 600);
         //ajoute le texte du menu
-        Text t = new Text("Menu");
-        t.setFont(new Font(50));
-        t.setX(s.getWidth() / 2 - t.getLayoutBounds().getWidth() / 2);
-        t.setY(s.getHeight() / 2 - t.getLayoutBounds().getHeight() / 2);
+        Text t = title("Menu", s);
         p.getChildren().add(t);
         //ajoute le bouton pour lancer le jeu
         JFXButton b = new JFXButton("Jouer");
@@ -109,7 +106,6 @@ public class DualVaders extends Application {
 
     static double timeElapsed = 0;
 
-    int vie_max = 10;
     static int nombre_ennemis = 25;
     static int taille_ennemis = 40;
 
@@ -126,7 +122,7 @@ public class DualVaders extends Application {
     public static void game(Stage primaryStage) {
 
         // initialisation de la liste des ennemis
-        enemies = new ArrayList<Alien>();
+        enemies = new ArrayList<>();
 
         //créé un panneau
         Pane p = new Pane();
@@ -173,7 +169,7 @@ public class DualVaders extends Application {
         timerTxt = new Text(420, 20, " Temps : " + timeElapsed);
         p.getChildren().add(timerTxt);
 
-        //place r au centre de la scène en bas
+        //place le joueur 1 au centre de la scène en bas
         r.setX(s.getWidth() / 2 - r.getWidth() / 2);
         r.setY(s.getHeight() - r.getHeight());
         //place r2 au centre de la scène en haut
@@ -211,26 +207,19 @@ public class DualVaders extends Application {
     }
 
     /**
-     * Vérification de la fin du jeu (gagnant ou perdant)
+     * Texte de titre
+     * @param text texte à afficher
+     * @param s scène sur laquelle afficher le texte
+     * @return le texte mis en forme
      */
-    public static void checkEndGame(){
-        String msg = "";
-        Player r = players.get(0);
-        Player r2 = players.get(1);
-        if(r.getLife() <= 0){
-            Log.i("Over. Player 1 died");
-            msg = "Player 1 died. Player 2 wins!";
-        }
-        if (r2.getLife() <= 0){
-            Log.i("Over. Player 2 died");
-            msg = "Player 2 died. Player 1 wins!";
-        }
-        if (enemies.size() == 0){
-            Log.i("Over. All aliens died");
-            msg = "All aliens died. Players win!";
-        }
-        if (!msg.equals("")) gameOver(primStage, msg);
+    private static Text title(String text, Scene s) {
+        Text t = new Text(text);
+        t.setFont(new Font(50));
+        t.setX(s.getWidth() / 2 - t.getLayoutBounds().getWidth() / 2);
+        t.setY(s.getHeight() / 2 - t.getLayoutBounds().getHeight() / 2);
+        return t;
     }
+
 
     /**
      * Écran de fin de partie
@@ -244,10 +233,7 @@ public class DualVaders extends Application {
         //crée une scène
         Scene s = new Scene(p, 800, 600);
         //ajoute le texte de titre
-        Text title = new Text("Game Over!");
-        title.setFont(new Font(50));
-        title.setX(s.getWidth() / 2 - title.getLayoutBounds().getWidth() / 2);
-        title.setY(s.getHeight() / 2 - title.getLayoutBounds().getHeight() / 2);
+        Text title = title("Game Over!", s);
         p.getChildren().add(title);
 
         // message
@@ -298,6 +284,29 @@ public class DualVaders extends Application {
         //affiche le stage
         primaryStage.show();
     }
+
+    /**
+     * Vérification de la fin du jeu (gagnant ou perdant)
+     */
+    public static void checkEndGame(){
+        String msg = "";
+        Player r = players.get(0);
+        Player r2 = players.get(1);
+        if(r.getLife() <= 0){
+            Log.i("Over. Player 1 died");
+            msg = "Player 1 died. Player 2 wins!";
+        }
+        if (r2.getLife() <= 0){
+            Log.i("Over. Player 2 died");
+            msg = "Player 2 died. Player 1 wins!";
+        }
+        if (enemies.size() == 0){
+            Log.i("Over. All aliens died");
+            msg = "All aliens died. Players win!";
+        }
+        if (!msg.equals("")) gameOver(primStage, msg);
+    }
+
 
     /**
      * Permet au timer de s'incrémenter toutes les 10 millisecondes
@@ -360,8 +369,8 @@ public class DualVaders extends Application {
 
 
     /**
-     * Envoi de projectiles par les aliens.
-     * Les aliens tirent aléatoirement, dans une direction aléatoire (haut ou bas).
+     * Élection des aliens qui vont tirer.
+     * Cette sélection est aléatoire dans [0, nb_aliens/2[.
      */
     public static void alienShoot(){
         Random rdm = new Random();
@@ -374,7 +383,7 @@ public class DualVaders extends Application {
                 try {
                     int nombre_ennemis = enemies.size();
                     int nb_aliens_shooting = rdm.nextInt(nombre_ennemis / 2);
-                    List<Integer> aliens_shooting = new ArrayList<Integer>();
+                    List<Integer> aliens_shooting = new ArrayList<>();
                     for (int i = 0; i < nb_aliens_shooting; i++) {
                         int alien_nbr;
                         do {
@@ -402,10 +411,9 @@ public class DualVaders extends Application {
      */
     public static void updateCounters(){
         Platform.runLater(() -> {
+            // Life counters
             int lifeP1 = players.get(0).getLife();
             int lifeP2 = players.get(1).getLife();
-            int scoreP1 = players.get(0).getScore();
-            int scoreP2 = players.get(1).getScore();
             lifeTxt1.setText(" Vie du vaisseau 1 : " + lifeP1);
             lifeTxt2.setText(" Vie du vaisseau 2 : " + lifeP2);
             viePlayer1.setHeight(lifeP1*10);
@@ -413,6 +421,9 @@ public class DualVaders extends Application {
 
             viePlayer1.setLayoutY(primStage.getHeight() - viePlayer1.getHeight() + 10);
 
+            // Score counters
+            int scoreP1 = players.get(0).getScore();
+            int scoreP2 = players.get(1).getScore();
             scoreTxt1.setText(" Score 1 : " + scoreP1);
             scoreTxt2.setText(" Score 2 : " + scoreP2);
         });

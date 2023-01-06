@@ -13,15 +13,15 @@ public interface Ship {
      * @param dir Direction du déplacement ('r' pour droite, 'l' pour gauche, 'u' pour haut, 'd' pour bas)
      * @param s Scène sur laquelle le joueur est affiché
      */
-    public void move(char dir, Scene s);
+    void move(char dir, Scene s);
 
     /**
      * Tir des vaisseaux. Cette fonction prend également en compte les collisions avec les vaisseaux ennemis.
      */
-    public void shoot();
+    void shoot();
 
     /**
      * Prise en compte de la collision avec une balle ennemie.
      */
-    public void handleDamage();
+    void handleDamage();
 }
