@@ -29,6 +29,7 @@ public class Player extends Rectangle implements Ship {
     private final KeyCode left, right, shoot;
     private final int canonType;
     private int shootDirection;
+    private List<Bullet> bulletList;
     @Override
     public void move(char dir, Scene s) {
         int dx = (dir == 'r') ? 10 : -10;
@@ -42,7 +43,7 @@ public class Player extends Rectangle implements Ship {
     @Override
     public void shoot() {
         Bullet bullet = new Bullet(this.canonType, "blue", this.pane);
-        DualVaders.flyingBullets.add(bullet);
+        bulletList.add(bullet);
 
         this.pane.getChildren().add(bullet);
         bullet.setX(this.getX() + this.width / 2 - bullet.getWidth() / 2);
@@ -162,7 +163,35 @@ public class Player extends Rectangle implements Ship {
      * @param left Touche de déplacement gauche.
      * @param right Touche de déplacement droite.
      * @param shoot Touche de tir.
+     * @param bulletList Liste des projectiles en tirés. Si non précisé, la liste est celle de DualVaders.
      */
+    public Player(double width, double height, Pane p, Scene s, KeyCode left, KeyCode right, KeyCode shoot, List<Bullet> bulletList) {
+        super(width, height);
+        this.height = height;
+        this.width = width;
+        this.life = 20;
+        this.score = 0;
+        this.pane = p;
+        this.scene = s;
+        this.left = left;
+        this.right = right;
+        this.shoot = shoot;
+        this.canonType = 1;
+        this.bulletList = bulletList;
+
+        setShootDirection();
+
+        try {
+            File playerImg = new File("src/main/resources/player.png");
+            Image vaisseau = new Image(playerImg.toURI().toString());
+            this.setFill(new ImagePattern(vaisseau, 0, 0, 1, 1, true));
+        } catch (Exception e) {
+            Log.e("Player", "Player image not found", e);
+        }
+        p.getChildren().add(this);
+    }
+
+
     public Player(double width, double height, Pane p, Scene s, KeyCode left, KeyCode right, KeyCode shoot) {
         super(width, height);
         this.height = height;
@@ -175,6 +204,7 @@ public class Player extends Rectangle implements Ship {
         this.right = right;
         this.shoot = shoot;
         this.canonType = 1;
+        this.bulletList = DualVaders.flyingBullets;
 
         setShootDirection();
 

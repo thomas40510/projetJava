@@ -18,9 +18,6 @@ class AlienTest {
 
     @BeforeEach
     void setUp() {
-        // Create scene and pane, then create 10 aliens
-        // and add them to the pane
-
         new Thread(() -> {
             p = new Pane();
             s = new Scene(p, 800, 600);
