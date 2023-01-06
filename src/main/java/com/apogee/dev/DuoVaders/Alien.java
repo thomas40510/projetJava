@@ -50,7 +50,7 @@ public class Alien extends Rectangle implements Ship {
     public void shoot() {
         Random rand = new Random();
         int direction = rand.nextInt(2);
-        Bullet bullet = new Bullet(1, "red");
+        Bullet bullet = new Bullet(1, "red", this.pane);
         DualVaders.flyingBullets.add(bullet);
         this.pane.getChildren().add(bullet);
         bullet.setX(this.getX() + this.getWidth() / 2 - bullet.getWidth() / 2);
@@ -59,15 +59,13 @@ public class Alien extends Rectangle implements Ship {
         KeyFrame kf = new KeyFrame(javafx.util.Duration.seconds(.1), e -> {
             if (bullet.getY() < 0 || bullet.getY() > this.scene.getHeight()) {
                 timeline.stop();
-                DualVaders.flyingBullets.remove(bullet);
-                this.pane.getChildren().remove(bullet);
+                bullet.destroy();
             }
             for (Player target : DualVaders.players) {
                 if (bullet.getBoundsInParent().intersects(target.getBoundsInParent())) {
                     timeline.stop();
                     target.handleDamage();
-                    DualVaders.flyingBullets.remove(bullet);
-                    this.pane.getChildren().remove(bullet);
+                    bullet.destroy();
                 }
             }
             int dx = (direction == 0) ? 10 : -10;

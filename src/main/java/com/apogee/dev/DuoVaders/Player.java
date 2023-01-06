@@ -41,7 +41,7 @@ public class Player extends Rectangle implements Ship {
 
     @Override
     public void shoot() {
-        Bullet bullet = new Bullet(this.canonType, "blue");
+        Bullet bullet = new Bullet(this.canonType, "blue", this.pane);
         DualVaders.flyingBullets.add(bullet);
 
         this.pane.getChildren().add(bullet);
@@ -56,15 +56,13 @@ public class Player extends Rectangle implements Ship {
         KeyFrame kf = new KeyFrame(javafx.util.Duration.seconds(0.01), e -> {
             if (bullet.getY() < 0 || bullet.getY() > this.scene.getHeight()) {
                 timeline.stop();
-                DualVaders.flyingBullets.remove(bullet);
-                this.pane.getChildren().remove(bullet);
+                bullet.destroy();
             }
             for (Alien target : targets) {
                 if (bullet.getBoundsInParent().intersects(target.getBoundsInParent())) {
                     target.handleDamage();
                     this.score++;
-                    DualVaders.flyingBullets.remove(bullet);
-                    this.pane.getChildren().remove(bullet);
+                    bullet.destroy();
                     DualVaders.updateCounters();
                     timeline.stop();
                     break;
@@ -73,11 +71,9 @@ public class Player extends Rectangle implements Ship {
             // collision with other bullets
             for (Bullet otherBullet : DualVaders.flyingBullets) {
                 if (bullet.getBoundsInParent().intersects(otherBullet.getBoundsInParent()) && otherBullet != bullet) {
-                    DualVaders.flyingBullets.remove(bullet);
-                    this.pane.getChildren().remove(bullet);
-                    DualVaders.flyingBullets.remove(otherBullet);
-                    this.pane.getChildren().remove(otherBullet);
                     timeline.stop();
+                    bullet.destroy();
+                    otherBullet.destroy();
                     break;
                 }
             }
