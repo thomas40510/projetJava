@@ -12,6 +12,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test de la classe Player.
+ * @version 1.0
+ */
 class PlayerTest {
     private Pane p;
     private Scene s;
@@ -29,10 +33,12 @@ class PlayerTest {
 
     }
 
+    /**
+     * Test du déplacement du joueur.
+     */
     @Test
     void move() {
         new Thread(() -> {
-            // Check if player is moving
             Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
             p.getChildren().add(player);
 
@@ -44,20 +50,21 @@ class PlayerTest {
             player.move('l', s);
             assertEquals(0, player.getX());
             assertEquals(0, player.getY());
-            player.move('d', s);
+
+            // Check if player cannot go out of the scene
+            player.setX(0);
+            player.move('l', s);
             assertEquals(0, player.getX());
-            assertEquals(10, player.getY());
-            player.move('u', s);
-            assertEquals(0, player.getX());
-            assertEquals(0, player.getY());
         }).start();
     }
 
+    /**
+     * Test de la méthode shoot.
+     */
     @Test
     void shoot() {
         new Thread(() -> {
             List<Bullet> flyingBullets = new ArrayList<>();
-            // Check if player is shooting
             Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE, flyingBullets);
             p.getChildren().add(player);
 
@@ -68,10 +75,12 @@ class PlayerTest {
         }).start();
     }
 
+    /**
+     * Test de la prise de dégâts.
+     */
     @Test
     void handleDamage() {
         new Thread(() -> {
-            // Check if player is taking damage
             Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
             p.getChildren().add(player);
 
@@ -82,10 +91,12 @@ class PlayerTest {
         }).start();
     }
 
+    /**
+     * Test de l'accès à la taille du joueur.
+     */
     @Test
     void getSize() {
         new Thread(() -> {
-            // Check if player size is correct
             Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
             p.getChildren().add(player);
 
@@ -97,10 +108,12 @@ class PlayerTest {
         }).start();
     }
 
+    /**
+     * Test d'accès à la vie du joueur.
+     */
     @Test
     void getLife() {
         new Thread(() -> {
-            // Check if player life is correct
             Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
             p.getChildren().add(player);
 
@@ -108,10 +121,12 @@ class PlayerTest {
         }).start();
     }
 
+    /**
+     * Test d'accès aux contrôles du joueur.
+     */
     @Test
     void getKeyCode() {
         new Thread(() -> {
-            // Check if player keycodes are correct
             Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
             p.getChildren().add(player);
 

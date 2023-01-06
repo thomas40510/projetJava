@@ -11,6 +11,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test de la classe Alien.
+ * @version 1.0
+ */
 class AlienTest {
 
     private Pane p;
@@ -29,6 +33,9 @@ class AlienTest {
 
     }
 
+    /**
+     * Test du déplacement de l'Alien.
+     */
     @Test
     void move() {
         // Check if aliens are moving
@@ -51,6 +58,9 @@ class AlienTest {
         assertEquals(0, alien.getY());
     }
 
+    /**
+     * Test du tir de l'Alien.
+     */
     @Test
     void shoot() {
         new Thread(() -> {
@@ -68,20 +78,21 @@ class AlienTest {
         }).start();
     }
 
+    /**
+     * Test de la mort de l'Alien.
+     */
     @Test
     void handleDamage() {
         new Thread(() -> {
             List<Alien> aliens = new ArrayList<>();
-            // Check if aliens are taking damage
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10; i++) { // create aliens
                 Alien alien = new Alien(10, 10, p, s);
                 p.getChildren().add(alien);
                 aliens.add(alien);
             }
 
-            for (Alien alien : aliens) {
+            for (Alien alien : aliens) { // they all take damage
                 alien.handleDamage();
-                // check if still in pane
                 assertFalse(p.getChildren().contains(alien));
             }
 
