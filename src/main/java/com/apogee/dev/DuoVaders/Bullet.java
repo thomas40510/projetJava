@@ -9,8 +9,11 @@ import javafx.scene.shape.Rectangle;
  * @see Rectangle
  */
 public class Bullet extends Rectangle {
-    private Pane pane;
+    private final Pane pane;
 
+    /**
+     * Destruction du projectile. Concrètement, on le supprime du Pane et de la liste des projectiles en vol.
+     */
     public void destroy() {
         DualVaders.flyingBullets.remove(this);
         this.pane.getChildren().remove(this);
