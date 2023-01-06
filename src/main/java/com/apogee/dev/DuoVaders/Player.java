@@ -22,12 +22,12 @@ import java.util.List;
 public class Player extends Rectangle implements Ship {
     private int life;
     private int score;
-    private double width;
-    private double height;
-    private Pane pane;
-    private Scene scene;
-    private KeyCode left, right, shoot;
-    private int canonType;
+    private final double width;
+    private final double height;
+    private final Pane pane;
+    private final Scene scene;
+    private final KeyCode left, right, shoot;
+    private final int canonType;
     private int shootDirection;
     @Override
     public void move(char dir, Scene s) {
@@ -93,6 +93,18 @@ public class Player extends Rectangle implements Ship {
         DualVaders.checkEndGame();
     }
 
+    /**
+     * Accès à la taille du joueur
+     * @return taille du joueur, de la forme [largeur, hauteur]
+     */
+    public int[] getSize() {
+        return new int[]{(int) this.width, (int) this.height};
+    }
+
+    /**
+     * Accès au score du joueur
+     * @return score du joueur
+     */
     public int getScore() {
         return this.score;
     }
