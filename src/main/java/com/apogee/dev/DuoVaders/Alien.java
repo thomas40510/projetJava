@@ -104,7 +104,7 @@ public class Alien extends Rectangle implements Ship {
             Image alien = new Image(alienImg.toURI().toString());
             this.setFill(new ImagePattern(alien));
         } catch (Exception e) {
-            //Log.e("Alien", "Error loading alien image", e);
+            Log.e("Alien", "Error loading alien image", e);
             this.setFill(javafx.scene.paint.Color.RED);
         }
     }

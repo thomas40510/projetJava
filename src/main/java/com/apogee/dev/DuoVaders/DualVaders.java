@@ -81,7 +81,7 @@ public class DualVaders extends Application {
 
         q.setOnAction(e -> {
             // exit game
-            Log.d("Quitting game");
+            Log.i("Quitting game");
             Platform.exit();
         });
 
@@ -214,7 +214,6 @@ public class DualVaders extends Application {
      * Vérification de la fin du jeu (gagnant ou perdant)
      */
     public static void checkEndGame(){
-        Log.d("Checking end game. Enemies left : " + enemies.size());
         String msg = "";
         Player r = players.get(0);
         Player r2 = players.get(1);
@@ -287,7 +286,7 @@ public class DualVaders extends Application {
 
         q.setOnAction(e -> {
             // exit game
-            Log.d("Quitting game");
+            Log.i("Quitting game");
             Platform.exit();
         });
 
@@ -436,7 +435,7 @@ public class DualVaders extends Application {
             enemies.get(i).setX(x);
             enemies.get(i).setY(y);
         }
-        Log.d("Placed "+nombre_enemies+" enemies on "+nb_cols+" cols");
+        Log.i("Placed "+nombre_enemies+" enemies on "+nb_cols+" cols");
     }
 
     /**
