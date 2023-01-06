@@ -22,6 +22,7 @@ import java.util.Random;
 public class Alien extends Rectangle implements Ship {
     private Pane pane;
     private Scene scene;
+    private List<Bullet> bulletList;
     @Override
     public void move(char dir, Scene s) {
         int dx = 0;
@@ -51,7 +52,7 @@ public class Alien extends Rectangle implements Ship {
         Random rand = new Random();
         int direction = rand.nextInt(2);
         Bullet bullet = new Bullet(1, "red", this.pane);
-        DualVaders.flyingBullets.add(bullet);
+        this.bulletList.add(bullet);
         this.pane.getChildren().add(bullet);
         bullet.setX(this.getX() + this.getWidth() / 2 - bullet.getWidth() / 2);
         bullet.setY(this.getY() + this.getHeight());
@@ -90,20 +91,38 @@ public class Alien extends Rectangle implements Ship {
      * @param height Hauteur de l'Alien
      * @param p Pane dans lequel l'Alien est affiché
      * @param s Scene dans laquelle l'Alien est affiché
+     * @param bulletList Liste des balles en vol. Si non spécifié, la liste par défaut est utilisée.
      */
+    public Alien(double width, double height, Pane p, Scene s, List<Bullet> bulletList) {
+        this.setWidth(width);
+        this.setHeight(height);
+        this.pane = p;
+        this.scene = s;
+        this.bulletList = bulletList;
+        try {
+            File alienImg = new File("src/main/resources/alien.png");
+            Image alien = new Image(alienImg.toURI().toString());
+            this.setFill(new ImagePattern(alien));
+        } catch (Exception e) {
+            //Log.e("Alien", "Error loading alien image", e);
+            this.setFill(javafx.scene.paint.Color.RED);
+        }
+    }
     public Alien(double width, double height, Pane p, Scene s) {
         this.setWidth(width);
         this.setHeight(height);
         this.pane = p;
         this.scene = s;
+        this.bulletList = DualVaders.flyingBullets;
 
         try {
             File alienImg = new File("src/main/resources/alien.png");
             Image alien = new Image(alienImg.toURI().toString());
             this.setFill(new ImagePattern(alien));
         } catch (Exception e) {
-            Log.e("Alien", "Error loading alien image", e);
+            //Log.e("Alien", "Error loading alien image", e);
+            this.setFill(javafx.scene.paint.Color.RED);
         }
-
     }
+
 }
