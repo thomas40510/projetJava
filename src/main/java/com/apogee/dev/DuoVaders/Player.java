@@ -19,7 +19,7 @@ import java.util.List;
  * @see Rectangle
  */
 
-public class Player extends Rectangle implements Ship {
+public class Player extends Rectangle implements IPlayer {
     private int life;
     private int score;
     private final double width;
@@ -88,6 +88,11 @@ public class Player extends Rectangle implements Ship {
     }
 
     @Override
+    public void setLife(int life) {
+
+    }
+
+    @Override
     public void handleDamage() {
         this.life--;
         DualVaders.updateCounters();
@@ -110,12 +115,37 @@ public class Player extends Rectangle implements Ship {
         return this.score;
     }
 
+    @Override
+    public void setShootDirection(int shootDirection) {
+
+    }
+
+    @Override
+    public int getShootDirection() {
+        return 0;
+    }
+
+    @Override
+    public List<Bullet> getBulletList() {
+        return null;
+    }
+
+    @Override
+    public void setBulletList(List<Bullet> bulletList) {
+
+    }
+
     /**
      * Accès à la vie du joueur.
      * @return La vie du joueur.
      */
     public int getLife() {
         return this.life;
+    }
+
+    @Override
+    public void setScore(int score) {
+
     }
 
     /**
