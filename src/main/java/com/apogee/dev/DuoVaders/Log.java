@@ -18,26 +18,34 @@ public class Log {
     public static void main() {
         return;
     }
-    /** Log an error message
+    /** Log a detailed error message
      * @param tag The tag to use for the log message. Can be null
      * @param msg The message to log
      * @param tr An exception to log. Can be null
      */
     public static void e(String tag, String msg, Throwable tr){
-        //red-colored message
         System.out.println(RED + "[LOG/E]: (" + tag + ") " + msg + RESET);
         if(tr != null) tr.printStackTrace();
     }
+
+    /**
+     * Log a labelled error message
+     * @param tag
+     * @param msg
+     */
     public static void e(String tag, String msg){
-        //red-colored message
         System.out.println(RED + "[LOG/E]: (" + tag + ") " + msg + RESET);
     }
+
+    /**
+     * Log a concise error message
+     * @param msg
+     */
     public static void e(String msg){
-        //red-colored message
         System.out.println(RED + "[LOG/E]: " + msg + RESET);
     }
 
-    /** Log an info message
+    /** Log a detailed info message
      *
      * @param tag The tag to use for the log message. Can be null
      * @param msg The message to log
@@ -47,14 +55,25 @@ public class Log {
         System.out.println("[LOG/I]: (" + tag + ") " + msg);
         if (tr != null) tr.printStackTrace();
     }
+
+    /** Log a labelled info message
+     *
+     * @param tag The tag to use for the log message. Can be null
+     * @param msg The message to log
+     */
     public static void i(String tag, String msg) {
         System.out.println("[LOG/I]: (" + tag + ") " + msg);
     }
+
+    /** Log a concise info message
+     *
+     * @param msg The message to log
+     */
     public static void i(String msg){
         System.out.println("[LOG/I]: " + msg);
     }
 
-    /** Log a debug message
+    /** Log a detailed debug message
      *
      * @param tag The tag to use for the log message. Can be null
      * @param msg The message to log
@@ -66,10 +85,21 @@ public class Log {
         //print stack trace if exception is not null
         if(tr != null) tr.printStackTrace();
     }
+
+    /** Log a labelled debug message
+     *
+     * @param tag The tag to use for the log message. Can be null
+     * @param msg The message to log
+     */
     public static void d(String tag, String msg) {
         //blue-colored message
         System.out.println(BLUE + "[LOG/D]: (" + tag + ") " + msg + RESET);
     }
+
+    /** Log a concise debug message
+     *
+     * @param msg The message to log
+     */
     public static void d(String msg){
         //blue-colored message
         System.out.println(BLUE + "[LOG/D]: " + msg + RESET);
