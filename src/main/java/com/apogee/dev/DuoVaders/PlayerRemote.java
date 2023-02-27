@@ -82,7 +82,7 @@ public class PlayerRemote extends Rectangle implements IPlayer{
         return null;
     }
 
-    public PlayerRemote(double width, double height, Pane p, Scene s, List<Bullet> bulletList) {
+    public PlayerRemote(double width, double height, Pane p, Scene s) {
         super(width, height);
         this.height = height;
         this.width = width;
@@ -92,9 +92,9 @@ public class PlayerRemote extends Rectangle implements IPlayer{
         this.scene = s;
 
         this.canonType = 1;
-        this.bulletList = bulletList;
+        this.bulletList = DualVaders.flyingBullets;
 
-        setShootDirection();
+        setShootDirection(-1);
 
         try {
             File playerImg = new File("src/main/resources/player.png");

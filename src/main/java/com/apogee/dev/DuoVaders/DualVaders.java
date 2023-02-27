@@ -67,7 +67,7 @@ public class DualVaders extends Application {
         //ajoute un gestionnaire d'événements pour le bouton
         b.setOnAction(e -> {
             //lance le jeu
-            game(primaryStage);
+            game(primaryStage, true);
         });
 
         // Ajout d'un bouton pour quitter le jeu
@@ -96,7 +96,7 @@ public class DualVaders extends Application {
         //ajoute un gestionnaire d'événements pour le bouton
         b2.setOnAction(e -> {
             //lance le jeu
-            game(primaryStage);
+            game(primaryStage, false);
         });
 
         //set focus on text (better render of buttons)
@@ -146,14 +146,15 @@ public class DualVaders extends Application {
         Scene s = new Scene(p, 500, 500);
 
         Player r = new Player(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
+        Player r2;
 
         if (isLocal) {
             // Joueurs
-            Player r2 = new Player(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
+            r2 = new Player(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
 
         } else {
             // Joueurs
-            Player r2 = new PlayerRemote(50, 50, p, s);
+            r2 = new PlayerRemote(50, 50, p, s, );
         }
 
         players.add(r);
