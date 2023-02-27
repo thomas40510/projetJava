@@ -39,7 +39,7 @@ class PlayerTest {
     @Test
     void move() {
         new Thread(() -> {
-            Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
+            PlayerLocal player = new PlayerLocal(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
             p.getChildren().add(player);
 
             player.setX(0);
@@ -65,7 +65,7 @@ class PlayerTest {
     void shoot() {
         new Thread(() -> {
             List<Bullet> flyingBullets = new ArrayList<>();
-            Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE, flyingBullets);
+            PlayerLocal player = new PlayerLocal(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE, flyingBullets);
             p.getChildren().add(player);
 
             for (int i = 0; i < 10; i++) {
@@ -81,7 +81,7 @@ class PlayerTest {
     @Test
     void handleDamage() {
         new Thread(() -> {
-            Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
+            PlayerLocal player = new PlayerLocal(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
             p.getChildren().add(player);
 
             for (int i = 0; i < 10; i++) {
@@ -97,7 +97,7 @@ class PlayerTest {
     @Test
     void getSize() {
         new Thread(() -> {
-            Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
+            PlayerLocal player = new PlayerLocal(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
             p.getChildren().add(player);
 
             int[] size = player.getSize();
@@ -114,7 +114,7 @@ class PlayerTest {
     @Test
     void getLife() {
         new Thread(() -> {
-            Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
+            PlayerLocal player = new PlayerLocal(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
             p.getChildren().add(player);
 
             assertEquals(10, player.getLife());
@@ -127,7 +127,7 @@ class PlayerTest {
     @Test
     void getKeyCode() {
         new Thread(() -> {
-            Player player = new Player(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
+            PlayerLocal player = new PlayerLocal(10, 10, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
             p.getChildren().add(player);
 
             assertEquals(KeyCode.LEFT, player.getKeyCode('l'));

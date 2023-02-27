@@ -61,7 +61,7 @@ public class Alien extends Rectangle implements Ship {
                 timeline.stop();
                 bullet.destroy();
             }
-            for (Player target : DualVaders.players) {
+            for (PlayerLocal target : DualVaders.players) {
                 if (bullet.getBoundsInParent().intersects(target.getBoundsInParent())) {
                     timeline.stop();
                     target.handleDamage();

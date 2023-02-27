@@ -15,8 +15,7 @@ import javafx.scene.shape.Rectangle;
 import java.io.File;
 import java.util.List;
 
-public class PlayerRemote extends Rectangle implements IPlayer{
-
+public class PlayerRemote extends Player {
     private int life;
     private int score;
     private final double width;

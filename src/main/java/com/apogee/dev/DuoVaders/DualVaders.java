@@ -145,16 +145,16 @@ public class DualVaders extends Application {
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
 
-        Player r = new Player(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
+        Player r = new PlayerLocal(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
         Player r2;
 
         if (isLocal) {
             // Joueurs
-            r2 = new Player(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
+            r2 = new PlayerLocal(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
 
         } else {
             // Joueurs
-            r2 = new PlayerRemote(50, 50, p, s, );
+            r2 = new PlayerRemote(50, 50, p, s);
         }
 
         players.add(r);
@@ -203,7 +203,7 @@ public class DualVaders extends Application {
         place_enemies(nombre_ennemis, taille_ennemis, s);
 
         //ajoute un gestionnaire d'événements pour les touches du clavier
-        s.setOnKeyPressed(e -> {
+        s.setOnKeyPressed(e -> { //TODO : implement getKeyCode in Player
             for(Player player : players){
                 if (e.getCode() == player.getKeyCode('l')) {
                     player.move('l', s);
@@ -281,7 +281,7 @@ public class DualVaders extends Application {
         //ajoute un gestionnaire d'événements pour le bouton
         b.setOnAction(e -> {
             //lance le jeu
-            game(primaryStage);
+            game(primaryStage); //TODO: reset game with good param
         });
 
         // Bouton pour quitter
