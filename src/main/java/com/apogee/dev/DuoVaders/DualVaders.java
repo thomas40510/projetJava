@@ -44,16 +44,19 @@ public class DualVaders extends Application {
         Scene s = new Scene(p, 800, 600);
         //ajoute le texte du menu
         Text t = title("Menu", s);
+        //place le texte au centre en haut de la scene
+        t.setX(s.getWidth() / 2 - t.getLayoutBounds().getWidth() / 2);
+        t.setY(s.getHeight() / 4 - t.getLayoutBounds().getHeight() / 2);
         p.getChildren().add(t);
         //ajoute le bouton pour lancer le jeu
-        JFXButton b = new JFXButton("Jouer");
+        JFXButton b = new JFXButton("Jouer en local");
         //set style of button
         b.setStyle("-fx-font-size: 20px;" +
                 "-jfx-button-type: RAISED;" +
                 "-fx-background-color: #cccccc");
 
         // Positionnement du bouton
-        double bWidth = 80;
+        double bWidth = 200;
         double bHeight = 40;
         b.setMinSize(bWidth, bHeight);
         b.setMaxSize(bWidth, bHeight);
@@ -80,6 +83,20 @@ public class DualVaders extends Application {
             // exit game
             Log.i("Quitting game");
             Platform.exit();
+        });
+
+        //ajoute un bouton pour jouer en reseau
+        JFXButton b2 = new JFXButton("Jouer en réseau");
+        b2.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;-fx-background-color: #cccccc");
+        b2.setMinSize(bWidth, bHeight);
+        b2.setMaxSize(bWidth, bHeight);
+        b2.setLayoutX(s.getWidth() / 2 - bWidth / 2);
+        b2.setLayoutY(s.getHeight() / 2 - bWidth / 2 + 100);
+        p.getChildren().add(b2);
+        //ajoute un gestionnaire d'événements pour le bouton
+        b2.setOnAction(e -> {
+            //lance le jeu
+            game(primaryStage);
         });
 
         //set focus on text (better render of buttons)
