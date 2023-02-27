@@ -136,8 +136,7 @@ public class DualVaders extends Application {
      * Applications may create other stages, if needed, but they will not be
      * primary stages.
      */
-    public static void game(Stage primaryStage) {
-
+    public static void game(Stage primaryStage, boolean isLocal) {
         // initialisation de la liste des ennemis
         enemies = new ArrayList<>();
 
@@ -146,13 +145,19 @@ public class DualVaders extends Application {
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
 
-
-        // Joueurs
         Player r = new Player(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
-        Player r2 = new Player(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
+
+        if (isLocal) {
+            // Joueurs
+            Player r2 = new Player(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
+
+        } else {
+            // Joueurs
+            Player r2 = new PlayerRemote(50, 50, p, s);
+        }
+
         players.add(r);
         players.add(r2);
-
         // Aliens
         for (int i = 0; i < nombre_ennemis; i++) {
             Alien a = new Alien(taille_ennemis, taille_ennemis, p, s);
