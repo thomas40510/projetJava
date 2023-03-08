@@ -1,12 +1,14 @@
 package com.apogee.dev.DuoVaders;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 
 import java.util.List;
 
-public class Player extends Rectangle implements IPlayer{
+public class Player extends Rectangle implements IPlayer, Observable {
     @Override
     public void move(char dir, Scene s) {
 
@@ -68,5 +70,21 @@ public class Player extends Rectangle implements IPlayer{
 
     public Player(double width, double height){
         super(width, height);
+    }
+
+    /**
+     * @param invalidationListener
+     */
+    @Override
+    public void addListener(InvalidationListener invalidationListener) {
+
+    }
+
+    /**
+     * @param invalidationListener
+     */
+    @Override
+    public void removeListener(InvalidationListener invalidationListener) {
+
     }
 }
