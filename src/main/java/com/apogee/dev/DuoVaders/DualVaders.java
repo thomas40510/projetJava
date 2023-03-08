@@ -1,6 +1,6 @@
 package com.apogee.dev.DuoVaders;
 
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXButton;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -16,7 +16,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -136,6 +138,11 @@ public class DualVaders extends Application {
      * Applications may create other stages, if needed, but they will not be
      * primary stages.
      */
+
+    public static void game(Stage primaryStage){
+        game(primaryStage, true);
+    }
+
     public static void game(Stage primaryStage, boolean isLocal) {
         // initialisation de la liste des ennemis
         enemies = new ArrayList<>();

@@ -1,6 +1,7 @@
 package com.apogee.dev.DuoVaders;
 
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.shape.Rectangle;
 
 import java.util.List;
@@ -54,6 +55,10 @@ public class Player extends Rectangle implements IPlayer{
     @Override
     public void setBulletList(List<Bullet> bulletList) {
 
+    }
+
+    public KeyCode getKeyCode(char keyCode) {
+        return null;
     }
 
     @Override
