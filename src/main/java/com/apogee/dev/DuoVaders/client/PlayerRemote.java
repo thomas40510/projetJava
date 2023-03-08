@@ -1,19 +1,14 @@
-package com.apogee.dev.DuoVaders;
+package com.apogee.dev.DuoVaders.client;
 
 import javafx.scene.Scene;
 
 import java.util.List;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.scene.Scene;
+
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
-import javafx.scene.shape.Rectangle;
 
 import java.io.File;
-import java.util.List;
 
 public class PlayerRemote extends Player {
     private int life;

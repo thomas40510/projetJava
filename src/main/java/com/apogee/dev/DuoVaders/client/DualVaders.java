@@ -1,4 +1,4 @@
-package com.apogee.dev.DuoVaders;
+package com.apogee.dev.DuoVaders.client;
 
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.Animation;

@@ -1,5 +1,7 @@
 package com.apogee.dev.DuoVaders;
 
+import com.apogee.dev.DuoVaders.client.Bullet;
+import com.apogee.dev.DuoVaders.client.PlayerLocal;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;

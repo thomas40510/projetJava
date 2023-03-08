@@ -1,5 +1,6 @@
 package com.apogee.dev.DuoVaders;
 
+import com.apogee.dev.DuoVaders.client.Log;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
