@@ -77,10 +77,10 @@ public class Player extends Rectangle implements IPlayer, Observable {
         super(width, height);
     }
 
-<<<<<<< HEAD:src/main/java/com/apogee/dev/DuoVaders/client/Player.java
     public int getcanonType() {
         return 0;
-=======
+    }
+
     /**
      * @param invalidationListener
      */
@@ -94,7 +94,6 @@ public class Player extends Rectangle implements IPlayer, Observable {
      */
     @Override
     public void removeListener(InvalidationListener invalidationListener) {
-
->>>>>>> obs:src/main/java/com/apogee/dev/DuoVaders/Player.java
     }
+
 }
