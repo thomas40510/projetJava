@@ -19,6 +19,10 @@ public class TCPClient {
     private PrintStream socOut;
     private BufferedReader socIn;
 
+    public TCPClient() {
+        this(DEFAULT_HOST, DEFAULT_PORT);
+    }
+
     public TCPClient(String hostName, int portNumber) {
         this.hostName = hostName;
         this.portNumber = portNumber;
