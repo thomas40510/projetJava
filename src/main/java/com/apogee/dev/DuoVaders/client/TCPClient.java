@@ -1,5 +1,7 @@
 package com.apogee.dev.DuoVaders.client;
 
+import javafx.scene.input.KeyCode;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,7 +13,7 @@ import java.net.UnknownHostException;
 public class TCPClient {
     static final String DEFAULT_HOST = "localhost";
     static final int DEFAULT_PORT = 5000;
-    static final String logTag = "TCPClient";
+    static final String TAG = "TCPClient";
 
     private final int portNumber;
     private final String hostName;
@@ -36,13 +38,13 @@ public class TCPClient {
             socIn = new BufferedReader(new InputStreamReader(serverSocket.getInputStream()));
             success = true;
         } catch (UnknownHostException e) {
-            Log.e(logTag, "Don't know about host: " + hostName);
+            Log.e(TAG, "Don't know about host: " + hostName);
         } catch (ConnectException e) {
-            Log.e(logTag, "Connection refused. You need to initiate a server first.");
+            Log.e(TAG, "Connection refused. You need to initiate a server first.");
         } catch (IOException e) {
-            Log.e(logTag, "Couldn't get I/O for the connection to: " + hostName);
+            Log.e(TAG, "Couldn't get I/O for the connection to: " + hostName);
         }
-        Log.i(logTag, "Connected to server: " + hostName + ":" + portNumber);
+        Log.i(TAG, "Connected to server: " + hostName + ":" + portNumber);
         return success;
     }
 
@@ -52,16 +54,16 @@ public class TCPClient {
             socIn.close();
             serverSocket.close();
         } catch (Exception e) {
-            Log.e(logTag, "Couldn't close the connection to: " + hostName);
+            Log.e(TAG, "Couldn't close the connection to: " + hostName);
         }
-        Log.i(logTag, "Disconnected from server: " + hostName + ":" + portNumber);
+        Log.i(TAG, "Disconnected from server: " + hostName + ":" + portNumber);
     }
 
     public String sendString(String msg){
         String srvResponse = null;
         StringBuilder response = new StringBuilder();
 
-        Log.i(logTag, "Sending message: " + msg);
+        Log.i(TAG, "Sending message: " + msg);
 
         if(connectToServer()) {
             try {
@@ -69,15 +71,23 @@ public class TCPClient {
                 while ((srvResponse = socIn.readLine()) != null) {
                     response.append(srvResponse).append("\n");
                 }
-                Log.i(logTag, "Received response: " + response);
+                Log.i(TAG, "Received response: " + response);
                 disconnectFromServer();
             } catch (Exception e) {
-                Log.e(logTag, "Couldn't get I/O for the connection to: " + hostName);
+                Log.e(TAG, "Couldn't get I/O for the connection to: " + hostName);
             }
         } else {
-            Log.e(logTag, "Couldn't connect to server: " + hostName + ":" + portNumber);
+            Log.e(TAG, "Couldn't connect to server: " + hostName + ":" + portNumber);
         }
 
         return response.toString();
+    }
+
+    public void sendKey(KeyCode key) {
+        try{
+            sendString(key.toString());
+        } catch (Exception e) {
+            Log.e(TAG, "Couldn't send key: " + key);
+        }
     }
 }
