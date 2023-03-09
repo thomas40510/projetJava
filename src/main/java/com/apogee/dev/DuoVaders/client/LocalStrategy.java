@@ -5,6 +5,11 @@ import javafx.animation.Timeline;
 
 import java.util.List;
 
+/**
+ * Classe implémentant les méthodes de l'interface StrategyHandler pour le jeu en local.
+ * @version 1.0
+ * @see StrategyHandler
+ */
 public class LocalStrategy implements StrategyHandler {
     private final Player player;
 

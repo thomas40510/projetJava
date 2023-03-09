@@ -9,6 +9,13 @@ import javafx.scene.shape.Rectangle;
 
 import java.util.List;
 
+/**
+ * Classe générique représentant un joueur.
+ * @version 2.0
+ * @see Ship
+ * @see Rectangle
+ * @see IPlayer
+ */
 public class Player extends Rectangle implements IPlayer, Observable {
     @Override
     public void move(char dir, Scene s) {

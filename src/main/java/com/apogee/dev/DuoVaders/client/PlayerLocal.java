@@ -11,12 +11,12 @@ import java.io.File;
 import java.util.List;
 
 /**
- * Classe représentant un joueur
+ * Classe représentant un joueur local. Ses coups sont récupérés par le clavier et transformés en actions sur le jeu local.
+ * L'envoi ou non des informations au serveur est décidée par la stratégie appliquée.
  * @version 1.0
  * @see Ship
  * @see Rectangle
  */
-
 public class PlayerLocal extends Player {
     private int life;
     private int score;
@@ -89,10 +89,6 @@ public class PlayerLocal extends Player {
 
     }
 
-    /**
-     * Accès à la vie du joueur.
-     * @return La vie du joueur.
-     */
     public int getLife() {
         return this.life;
     }

@@ -10,6 +10,13 @@ import javafx.scene.paint.ImagePattern;
 
 import java.io.File;
 
+/**
+ * Classe représentant un joueur distant. Ses coups sont récupérés par le serveur et transformés en actions sur le jeu local.
+ * @version 1.0
+ * @see Ship
+ * @see IPlayer
+ * @see Player
+ */
 public class PlayerRemote extends Player {
     private int life;
     private int score;

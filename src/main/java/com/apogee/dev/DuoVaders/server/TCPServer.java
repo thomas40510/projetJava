@@ -6,6 +6,10 @@ import java.net.ServerSocket;
 import java.net.*;
 import java.io.*;
 
+/**
+ * Serveur TCP.
+ * @version 1.0
+ */
 public class TCPServer extends Thread {
     private static int nbConnections = 0;
     private static final String TAG = "TCPServer";

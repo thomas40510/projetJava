@@ -10,6 +10,10 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * Client TCP.
+ * @version 1.0
+ */
 public class TCPClient {
     static final String DEFAULT_HOST = "localhost";
     static final int DEFAULT_PORT = 5000;
