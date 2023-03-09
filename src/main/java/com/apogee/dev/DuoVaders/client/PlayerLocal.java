@@ -1,7 +1,5 @@
 package com.apogee.dev.DuoVaders.client;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -30,6 +28,9 @@ public class PlayerLocal extends Player {
     private final int canonType;
     private int shootDirection;
     private List<Bullet> bulletList;
+
+    private final StrategyHandler strategyHandler;
+
     @Override
     public void move(char dir, Scene s) {
         int dx = (dir == 'r') ? 10 : -10;
@@ -42,49 +43,7 @@ public class PlayerLocal extends Player {
 
     @Override
     public void shoot() {
-        Bullet bullet = new Bullet(this.canonType, "blue", this.pane);
-        bulletList.add(bullet);
-
-        this.pane.getChildren().add(bullet);
-        bullet.setX(this.getX() + this.width / 2 - bullet.getWidth() / 2);
-        bullet.setY(this.getY());
-
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(Timeline.INDEFINITE);
-
-        List<Alien> targets = DualVaders.enemies;
-
-        KeyFrame kf = new KeyFrame(javafx.util.Duration.seconds(0.01), e -> {
-            if (bullet.getY() < 0 || bullet.getY() > this.scene.getHeight()) {
-                timeline.stop();
-                bullet.destroy();
-            }
-            for (Alien target : targets) {
-                if (bullet.getBoundsInParent().intersects(target.getBoundsInParent())) {
-                    target.handleDamage();
-                    this.score++;
-                    bullet.destroy();
-                    DualVaders.updateCounters();
-                    timeline.stop();
-                    break;
-                }
-            }
-            // collision with other bullets
-            for (Bullet otherBullet : DualVaders.flyingBullets) {
-                if (bullet.getBoundsInParent().intersects(otherBullet.getBoundsInParent()) && otherBullet != bullet) {
-                    timeline.stop();
-                    bullet.destroy();
-                    otherBullet.destroy();
-                    break;
-                }
-            }
-
-
-            bullet.setY(bullet.getY() + this.shootDirection);
-        });
-
-        timeline.getKeyFrames().add(kf);
-        timeline.play();
+        strategyHandler.shoot();
     }
 
     @Override
@@ -184,6 +143,11 @@ public class PlayerLocal extends Player {
         }
     }
 
+    public Pane getPane() {
+        return pane;
+    }
+
+
     /**
      * Constructeur du joueur.
      * @param width Largeur du joueur.
@@ -195,7 +159,9 @@ public class PlayerLocal extends Player {
      * @param shoot Touche de tir.
      * @param bulletList Liste des projectiles en tirés. Si non précisé, la liste est celle de DualVaders.
      */
-    public PlayerLocal(double width, double height, Pane p, Scene s, KeyCode left, KeyCode right, KeyCode shoot, List<Bullet> bulletList) {
+    public PlayerLocal(double width, double height, Pane p, Scene s,
+                       KeyCode left, KeyCode right, KeyCode shoot,
+                       List<Bullet> bulletList) {
         super(width, height);
         this.height = height;
         this.width = width;
@@ -208,6 +174,7 @@ public class PlayerLocal extends Player {
         this.shoot = shoot;
         this.canonType = 1;
         this.bulletList = bulletList;
+        this.strategyHandler = new LocalStrategy(this);
 
         setShootDirection();
 
@@ -221,8 +188,7 @@ public class PlayerLocal extends Player {
         p.getChildren().add(this);
     }
 
-
-    public PlayerLocal(double width, double height, Pane p, Scene s, KeyCode left, KeyCode right, KeyCode shoot) {
+    public PlayerLocal(double width, double height, Pane p, Scene s, KeyCode left, KeyCode right, KeyCode shoot, boolean isLocal) {
         super(width, height);
         this.height = height;
         this.width = width;
@@ -235,6 +201,7 @@ public class PlayerLocal extends Player {
         this.shoot = shoot;
         this.canonType = 1;
         this.bulletList = DualVaders.flyingBullets;
+        this.strategyHandler = isLocal ? new LocalStrategy(this) : new RemoteStrategy(this);
 
         setShootDirection();
 

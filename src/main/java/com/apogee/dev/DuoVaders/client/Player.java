@@ -2,6 +2,7 @@ package com.apogee.dev.DuoVaders.client;
 
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
 import java.util.List;
@@ -66,7 +67,15 @@ public class Player extends Rectangle implements IPlayer{
         return null;
     }
 
+    public Pane getPane() {
+        return null;
+    }
+
     public Player(double width, double height){
         super(width, height);
+    }
+
+    public int getcanonType() {
+        return 0;
     }
 }

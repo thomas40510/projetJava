@@ -152,9 +152,9 @@ public class DualVaders extends Application {
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
 
-        Player r = new PlayerLocal(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
         Player r2;
 
+        Player r = new PlayerLocal(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE, isLocal);
         if (isLocal) {
             // Joueurs
             r2 = new PlayerLocal(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
@@ -163,6 +163,7 @@ public class DualVaders extends Application {
             // Joueurs
             r2 = new PlayerRemote(50, 50, p, s);
         }
+
 
         players.add(r);
         players.add(r2);
