@@ -16,9 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -29,7 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @see Application
  */
 
-public class DualVaders extends Application {
+public class DualVaders extends Application implements Observer {
     static Stage primStage;
 
     /**
@@ -486,5 +484,20 @@ public class DualVaders extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+    }
+
+    /**
+     * This method is called whenever the observed object is changed. An
+     * application calls an {@code Observable} object's
+     * {@code notifyObservers} method to have all the object's
+     * observers notified of the change.
+     *
+     * @param o   the observable object.
+     * @param arg an argument passed to the {@code notifyObservers}
+     *            method.
+     */
+    @Override
+    public void update(Observable o, Object arg) {
+
     }
 }
