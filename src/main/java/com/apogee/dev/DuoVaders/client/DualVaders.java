@@ -1,5 +1,6 @@
 package com.apogee.dev.DuoVaders.client;
 
+import com.apogee.dev.DuoVaders.Log;
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;

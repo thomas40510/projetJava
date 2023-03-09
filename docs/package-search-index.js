@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.apogee.dev.DuoVaders"}];updateSearchResults();
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"com.apogee.dev.DuoVaders"},{"l":"com.apogee.dev.DuoVaders.client"},{"l":"com.apogee.dev.DuoVaders.server"}];updateSearchResults();
