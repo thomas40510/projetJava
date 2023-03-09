@@ -8,7 +8,7 @@ import java.util.List;
 public class LocalStrategy implements StrategyHandler {
     private final Player player;
 
-    public void shoot() { //TODO: bullet is shot but does not move
+    public void shoot() {
         Bullet bullet = new Bullet(player.getcanonType(), "blue", player.getPane());
         DualVaders.flyingBullets.add(bullet);
 

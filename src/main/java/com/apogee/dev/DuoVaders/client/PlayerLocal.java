@@ -76,7 +76,7 @@ public class PlayerLocal extends Player {
 
     @Override
     public int getShootDirection() {
-        return 0;
+        return shootDirection;
     }
 
     @Override
