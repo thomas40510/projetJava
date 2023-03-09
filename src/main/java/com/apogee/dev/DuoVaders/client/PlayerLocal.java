@@ -33,12 +33,7 @@ public class PlayerLocal extends Player {
 
     @Override
     public void move(char dir, Scene s) {
-        int dx = (dir == 'r') ? 10 : -10;
-        double newPos = this.getX() + dx;
-
-        if (newPos >= 0 && newPos <= s.getWidth() - this.width) {
-            this.setX(newPos);
-        }
+        strategyHandler.move(dir);
     }
 
     @Override
@@ -161,7 +156,7 @@ public class PlayerLocal extends Player {
      */
     public PlayerLocal(double width, double height, Pane p, Scene s,
                        KeyCode left, KeyCode right, KeyCode shoot,
-                       List<Bullet> bulletList) {
+                       List<Bullet> bulletList, boolean isLocal) {
         super(width, height);
         this.height = height;
         this.width = width;
@@ -174,33 +169,6 @@ public class PlayerLocal extends Player {
         this.shoot = shoot;
         this.canonType = 1;
         this.bulletList = bulletList;
-        this.strategyHandler = new LocalStrategy(this);
-
-        setShootDirection();
-
-        try {
-            File playerImg = new File("src/main/resources/player.png");
-            Image vaisseau = new Image(playerImg.toURI().toString());
-            this.setFill(new ImagePattern(vaisseau, 0, 0, 1, 1, true));
-        } catch (Exception e) {
-            Log.e("Player", "Player image not found", e);
-        }
-        p.getChildren().add(this);
-    }
-
-    public PlayerLocal(double width, double height, Pane p, Scene s, KeyCode left, KeyCode right, KeyCode shoot, boolean isLocal) {
-        super(width, height);
-        this.height = height;
-        this.width = width;
-        this.life = 20;
-        this.score = 0;
-        this.pane = p;
-        this.scene = s;
-        this.left = left;
-        this.right = right;
-        this.shoot = shoot;
-        this.canonType = 1;
-        this.bulletList = DualVaders.flyingBullets;
         this.strategyHandler = isLocal ? new LocalStrategy(this) : new RemoteStrategy(this);
 
         setShootDirection();
@@ -213,5 +181,14 @@ public class PlayerLocal extends Player {
             Log.e("Player", "Player image not found", e);
         }
         p.getChildren().add(this);
+    }
+    public PlayerLocal(double width, double height, Pane p, Scene s, KeyCode left, KeyCode right, KeyCode shoot, boolean isLocal) {
+        this(width, height, p, s, left, right, shoot, DualVaders.flyingBullets, isLocal);
+    }
+    public PlayerLocal(double width, double height, Pane p, Scene s, KeyCode left, KeyCode right, KeyCode shoot, List<Bullet> bulletList) {
+        this(width, height, p, s, left, right, shoot, bulletList, true);
+    }
+    public PlayerLocal(double width, double height, Pane p, Scene s, KeyCode left, KeyCode right, KeyCode shoot) {
+        this(width, height, p, s, left, right, shoot, DualVaders.flyingBullets, true);
     }
 }

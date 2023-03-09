@@ -43,7 +43,7 @@ public class DualVaders extends Application {
         //crée un panneau
         Pane p = new Pane();
         //crée une scène
-        Scene s = new Scene(p, 800, 600);
+        final Scene s = new Scene(p, 800, 600);
         //ajoute le texte du menu
         Text t = title("Menu", s);
         //place le texte au centre en haut de la scene
@@ -157,7 +157,7 @@ public class DualVaders extends Application {
         Player r = new PlayerLocal(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE, isLocal);
         if (isLocal) {
             // Joueurs
-            r2 = new PlayerLocal(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
+            r2 = new PlayerLocal(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E, true);
 
         } else {
             // Joueurs
