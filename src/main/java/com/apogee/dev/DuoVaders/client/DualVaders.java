@@ -1,6 +1,7 @@
-package com.apogee.dev.DuoVaders;
+package com.apogee.dev.DuoVaders.client;
 
-import com.jfoenix.controls.*;
+import com.apogee.dev.DuoVaders.Log;
+import com.jfoenix.controls.JFXButton;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @see Application
  */
 
-public class DualVaders extends Application {
+public class DualVaders extends Application implements Observer {
     static Stage primStage;
 
     /**
@@ -41,19 +42,22 @@ public class DualVaders extends Application {
         //crée un panneau
         Pane p = new Pane();
         //crée une scène
-        Scene s = new Scene(p, 800, 600);
+        final Scene s = new Scene(p, 800, 600);
         //ajoute le texte du menu
         Text t = title("Menu", s);
+        //place le texte au centre en haut de la scene
+        t.setX(s.getWidth() / 2 - t.getLayoutBounds().getWidth() / 2);
+        t.setY(s.getHeight() / 4 - t.getLayoutBounds().getHeight() / 2);
         p.getChildren().add(t);
         //ajoute le bouton pour lancer le jeu
-        JFXButton b = new JFXButton("Jouer");
+        JFXButton b = new JFXButton("Jouer en local");
         //set style of button
         b.setStyle("-fx-font-size: 20px;" +
                 "-jfx-button-type: RAISED;" +
                 "-fx-background-color: #cccccc");
 
         // Positionnement du bouton
-        double bWidth = 80;
+        double bWidth = 200;
         double bHeight = 40;
         b.setMinSize(bWidth, bHeight);
         b.setMaxSize(bWidth, bHeight);
@@ -64,7 +68,7 @@ public class DualVaders extends Application {
         //ajoute un gestionnaire d'événements pour le bouton
         b.setOnAction(e -> {
             //lance le jeu
-            game(primaryStage);
+            game(primaryStage, true);
         });
 
         // Ajout d'un bouton pour quitter le jeu
@@ -81,6 +85,21 @@ public class DualVaders extends Application {
             Log.i("Quitting game");
             Platform.exit();
         });
+
+        //ajoute un bouton pour jouer en reseau
+        JFXButton b2 = new JFXButton("Jouer en réseau");
+        b2.setStyle("-fx-font-size: 20px;-jfx-button-type: RAISED;-fx-background-color: #cccccc");
+        b2.setMinSize(bWidth, bHeight);
+        b2.setMaxSize(bWidth, bHeight);
+        b2.setLayoutX(s.getWidth() / 2 - bWidth / 2);
+        b2.setLayoutY(s.getHeight() / 2 - bWidth / 2 + 100);
+        p.getChildren().add(b2);
+        //ajoute un gestionnaire d'événements pour le bouton
+        b2.setOnAction(e -> {
+            //lance le jeu
+            game(primaryStage, false);
+        });
+        b2.setDisable(true);
 
         //set focus on text (better render of buttons)
         t.requestFocus();
@@ -119,8 +138,12 @@ public class DualVaders extends Application {
      * Applications may create other stages, if needed, but they will not be
      * primary stages.
      */
-    public static void game(Stage primaryStage) {
 
+    public static void game(Stage primaryStage){
+        game(primaryStage, true);
+    }
+
+    public static void game(Stage primaryStage, boolean isLocal) {
         // initialisation de la liste des ennemis
         enemies = new ArrayList<>();
 
@@ -129,13 +152,21 @@ public class DualVaders extends Application {
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
 
+        Player r2;
 
-        // Joueurs
-        Player r = new Player(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
-        Player r2 = new Player(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
+        Player r = new PlayerLocal(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE, isLocal);
+        if (isLocal) {
+            // Joueurs
+            r2 = new PlayerLocal(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E, true);
+
+        } else {
+            // Joueurs
+            r2 = new PlayerRemote(50, 50, p, s);
+        }
+
+
         players.add(r);
         players.add(r2);
-
         // Aliens
         for (int i = 0; i < nombre_ennemis; i++) {
             Alien a = new Alien(taille_ennemis, taille_ennemis, p, s);
@@ -180,7 +211,7 @@ public class DualVaders extends Application {
         place_enemies(nombre_ennemis, taille_ennemis, s);
 
         //ajoute un gestionnaire d'événements pour les touches du clavier
-        s.setOnKeyPressed(e -> {
+        s.setOnKeyPressed(e -> { //TODO : implement getKeyCode in Player
             for(Player player : players){
                 if (e.getCode() == player.getKeyCode('l')) {
                     player.move('l', s);
@@ -258,7 +289,7 @@ public class DualVaders extends Application {
         //ajoute un gestionnaire d'événements pour le bouton
         b.setOnAction(e -> {
             //lance le jeu
-            game(primaryStage);
+            game(primaryStage); //TODO: reset game with good param
         });
 
         // Bouton pour quitter
@@ -455,5 +486,20 @@ public class DualVaders extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+    }
+
+    /**
+     * This method is called whenever the observed object is changed. An
+     * application calls an {@code Observable} object's
+     * {@code notifyObservers} method to have all the object's
+     * observers notified of the change.
+     *
+     * @param o   the observable object.
+     * @param arg an argument passed to the {@code notifyObservers}
+     *            method.
+     */
+    @Override
+    public void update(Observable o, Object arg) {
+
     }
 }

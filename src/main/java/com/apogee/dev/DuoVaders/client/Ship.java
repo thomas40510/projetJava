@@ -1,4 +1,4 @@
-package com.apogee.dev.DuoVaders;
+package com.apogee.dev.DuoVaders.client;
 
 import javafx.scene.Scene;
 
