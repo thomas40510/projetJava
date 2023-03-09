@@ -98,6 +98,7 @@ public class DualVaders extends Application implements Observer {
             //lance le jeu
             game(primaryStage, false);
         });
+        b2.setDisable(true);
 
         //set focus on text (better render of buttons)
         t.requestFocus();
