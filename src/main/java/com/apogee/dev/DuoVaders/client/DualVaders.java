@@ -1,6 +1,6 @@
-package com.apogee.dev.DuoVaders;
+package com.apogee.dev.DuoVaders.client;
 
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXButton;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -16,7 +16,9 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +43,7 @@ public class DualVaders extends Application {
         //crée un panneau
         Pane p = new Pane();
         //crée une scène
-        Scene s = new Scene(p, 800, 600);
+        final Scene s = new Scene(p, 800, 600);
         //ajoute le texte du menu
         Text t = title("Menu", s);
         //place le texte au centre en haut de la scene
@@ -67,7 +69,7 @@ public class DualVaders extends Application {
         //ajoute un gestionnaire d'événements pour le bouton
         b.setOnAction(e -> {
             //lance le jeu
-            game(primaryStage);
+            game(primaryStage, true);
         });
 
         // Ajout d'un bouton pour quitter le jeu
@@ -96,7 +98,7 @@ public class DualVaders extends Application {
         //ajoute un gestionnaire d'événements pour le bouton
         b2.setOnAction(e -> {
             //lance le jeu
-            game(primaryStage);
+            game(primaryStage, false);
         });
 
         //set focus on text (better render of buttons)
@@ -136,8 +138,12 @@ public class DualVaders extends Application {
      * Applications may create other stages, if needed, but they will not be
      * primary stages.
      */
-    public static void game(Stage primaryStage) {
 
+    public static void game(Stage primaryStage){
+        game(primaryStage, true);
+    }
+
+    public static void game(Stage primaryStage, boolean isLocal) {
         // initialisation de la liste des ennemis
         enemies = new ArrayList<>();
 
@@ -146,13 +152,21 @@ public class DualVaders extends Application {
         //créé une scène de 500x500 pixels
         Scene s = new Scene(p, 500, 500);
 
+        Player r2;
 
-        // Joueurs
-        Player r = new Player(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE);
-        Player r2 = new Player(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E);
+        Player r = new PlayerLocal(50, 50, p, s, KeyCode.LEFT, KeyCode.RIGHT, KeyCode.SPACE, isLocal);
+        if (isLocal) {
+            // Joueurs
+            r2 = new PlayerLocal(50, 50, p, s, KeyCode.A, KeyCode.D, KeyCode.E, true);
+
+        } else {
+            // Joueurs
+            r2 = new PlayerRemote(50, 50, p, s);
+        }
+
+
         players.add(r);
         players.add(r2);
-
         // Aliens
         for (int i = 0; i < nombre_ennemis; i++) {
             Alien a = new Alien(taille_ennemis, taille_ennemis, p, s);
@@ -197,7 +211,7 @@ public class DualVaders extends Application {
         place_enemies(nombre_ennemis, taille_ennemis, s);
 
         //ajoute un gestionnaire d'événements pour les touches du clavier
-        s.setOnKeyPressed(e -> {
+        s.setOnKeyPressed(e -> { //TODO : implement getKeyCode in Player
             for(Player player : players){
                 if (e.getCode() == player.getKeyCode('l')) {
                     player.move('l', s);
@@ -275,7 +289,7 @@ public class DualVaders extends Application {
         //ajoute un gestionnaire d'événements pour le bouton
         b.setOnAction(e -> {
             //lance le jeu
-            game(primaryStage);
+            game(primaryStage); //TODO: reset game with good param
         });
 
         // Bouton pour quitter

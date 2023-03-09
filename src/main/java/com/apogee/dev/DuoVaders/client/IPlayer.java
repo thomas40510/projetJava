@@ -1,10 +1,11 @@
-package com.apogee.dev.DuoVaders;
+package com.apogee.dev.DuoVaders.client;
 
 import javafx.scene.Scene;
 
 import java.util.List;
 
 public interface IPlayer extends Ship {
+
     void move(char dir, Scene s);
     void shoot();
     void setLife(int life);

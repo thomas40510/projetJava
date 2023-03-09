@@ -1,5 +1,7 @@
 package com.apogee.dev.DuoVaders;
 
+import com.apogee.dev.DuoVaders.client.Alien;
+import com.apogee.dev.DuoVaders.client.Bullet;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;

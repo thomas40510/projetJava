@@ -1,22 +1,13 @@
-package com.apogee.dev.DuoVaders;
+package com.apogee.dev.DuoVaders.client;
 
 import javafx.scene.Scene;
-
-import java.util.List;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Rectangle;
 
-import java.io.File;
 import java.util.List;
 
-public class PlayerRemote extends Rectangle implements IPlayer{
-
+public class Player extends Rectangle implements IPlayer{
     @Override
     public void move(char dir, Scene s) {
 
@@ -67,8 +58,24 @@ public class PlayerRemote extends Rectangle implements IPlayer{
 
     }
 
+    public KeyCode getKeyCode(char keyCode) {
+        return null;
+    }
+
     @Override
     public List<Bullet> getBulletList() {
         return null;
+    }
+
+    public Pane getPane() {
+        return null;
+    }
+
+    public Player(double width, double height){
+        super(width, height);
+    }
+
+    public int getcanonType() {
+        return 0;
     }
 }
