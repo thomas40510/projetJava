@@ -1,5 +1,6 @@
 package com.apogee.dev.DuoVaders.client;
 
+import com.apogee.dev.DuoVaders.Log;
 import javafx.scene.input.KeyCode;
 
 import java.io.BufferedReader;

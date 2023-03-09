@@ -1,6 +1,6 @@
 package com.apogee.dev.DuoVaders.server;
 
-import com.apogee.dev.DuoVaders.client.Log;
+import com.apogee.dev.DuoVaders.Log;
 
 import java.net.ServerSocket;
 import java.net.*;

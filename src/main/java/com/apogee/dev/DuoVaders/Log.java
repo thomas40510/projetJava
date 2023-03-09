@@ -1,4 +1,4 @@
-package com.apogee.dev.DuoVaders.client;
+package com.apogee.dev.DuoVaders;
 
 /** Utility class for logging info on console.
  * Implements the Android-like Log command.

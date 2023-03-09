@@ -1,5 +1,6 @@
 package com.apogee.dev.DuoVaders.client;
 
+import com.apogee.dev.DuoVaders.Log;
 import javafx.scene.Scene;
 
 import java.util.List;
