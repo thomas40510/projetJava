@@ -13,8 +13,8 @@ public class TCPClient {
     static final int DEFAULT_PORT = 5000;
     static final String logTag = "TCPClient";
 
-    private int portNumber;
-    private String hostName;
+    private final int portNumber;
+    private final String hostName;
     private Socket serverSocket;
     private PrintStream socOut;
     private BufferedReader socIn;

@@ -7,8 +7,8 @@ import java.net.Socket;
 
 public class TransactionProcessor extends Thread {
     private static final String TAG = "TransactionProcessor";
-    private Socket clientSocket;
-    private TCPServer server;
+    private final Socket clientSocket;
+    private final TCPServer server;
 
     public TransactionProcessor(Socket clientSocket, TCPServer server) {
         super("ServerThread");
